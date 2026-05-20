@@ -1,9 +1,34 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
-import { Sparkles, X, Send, Bot, User, Check, MessageSquare } from "lucide-react";
+import { Sparkles, X, Send, Bot, User, Check, MessageSquare, Copy } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { chatWithAICopilot } from "@/app/actions/ai";
+
+function CopyButton({ text }: { text: string }) {
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error("Failed to copy text: ", err);
+    }
+  };
+
+  return (
+    <button
+      type="button"
+      onClick={handleCopy}
+      className="p-1.5 rounded-lg bg-zinc-900/80 hover:bg-zinc-800 border border-zinc-800/40 text-zinc-500 hover:text-white transition-colors cursor-pointer self-start shadow-sm"
+      title="Copy to clipboard"
+    >
+      {copied ? <Check size={10} className="text-green-400 animate-pulse" /> : <Copy size={10} />}
+    </button>
+  );
+}
 
 interface AICopilotProps {
   context: {
@@ -176,14 +201,21 @@ export default function AICopilot({ context, onApplyText }: AICopilotProps) {
                   </div>
 
                   <div className="max-w-[78%] flex flex-col gap-1.5">
-                    <div
-                      className={`p-3 rounded-2xl text-[11px] leading-relaxed shadow-sm ${
-                        msg.sender === "user"
-                          ? "bg-zinc-900 text-white rounded-tr-none"
-                          : "bg-zinc-950 border border-zinc-900 text-zinc-300 rounded-tl-none"
-                      }`}
-                    >
-                      {msg.text}
+                    <div className="relative group">
+                      <div
+                        className={`p-3 pr-8 rounded-2xl text-[11px] leading-relaxed shadow-sm whitespace-pre-line ${
+                          msg.sender === "user"
+                            ? "bg-zinc-900 text-white rounded-tr-none"
+                            : "bg-zinc-950 border border-zinc-900 text-zinc-300 rounded-tl-none"
+                        }`}
+                      >
+                        {msg.text}
+                      </div>
+
+                      {/* Copy Overlay Button */}
+                      <div className="absolute right-1.5 top-1.5 opacity-60 group-hover:opacity-100 transition-opacity">
+                        <CopyButton text={msg.text} />
+                      </div>
                     </div>
 
                     {/* Quick-apply helper if response lists suggestions and handler exists */}
