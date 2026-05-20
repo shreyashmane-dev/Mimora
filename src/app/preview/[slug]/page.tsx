@@ -616,7 +616,6 @@ export default function PublicMicrositePage() {
   }
 
   const theme = THEMES[project.templateId] || THEMES.midnight_luxury;
-  const lang: Language = (project.language as Language) || "en";
   const dict = TRANSLATIONS;
 
   if (isLocked) {
@@ -691,7 +690,7 @@ export default function PublicMicrositePage() {
                     transition={{ duration: 0.5 }}
                     className="block"
                   >
-                    {SUSPENSE_MESSAGES[lang]?.[msgIndex] || SUSPENSE_MESSAGES.en[msgIndex]}
+                    {SUSPENSE_MESSAGES.en[msgIndex]}
                   </motion.span>
                 </AnimatePresence>
               </div>
@@ -815,14 +814,6 @@ export default function PublicMicrositePage() {
 
   return (
     <div className={`min-h-screen flex flex-col justify-between overflow-x-hidden relative ${theme.bgClass} ${theme.fontClass} transition-colors duration-1000`}>
-      {/* Floating Google Translate Switcher in Unlocked View */}
-      <div className="absolute top-6 left-6 z-50 flex items-center gap-2">
-        <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/40 hover:bg-black/70 border border-white/10 backdrop-blur-md transition-all duration-300">
-          <span className="text-[10px] uppercase tracking-wider text-zinc-400 font-mono">Lang:</span>
-          <div id="google_translate_element" className="google-translate-styled" />
-        </div>
-      </div>
-      
       {/* Cinematic Ambient Effects matching each theme */}
       {project.templateId === "midnight_luxury" && (
         <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden opacity-40">
