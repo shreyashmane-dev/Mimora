@@ -71,7 +71,7 @@ export interface MemoraProject {
   nickname: string;
   age: number;
   relationship: string;
-  templateId: 'midnight_luxury' | 'memory_lane' | 'neon_party' | 'minimal_love' | 'golden_glimmer' | 'retro_pop' | 'cyber_punk' | 'classic' | 'sweet_sakura' | 'midnight_forest' | 'galactic_odyssey' | 'sunset_boulevard' | 'royal_velvet' | 'ocean_breeze' | 'disco_fever' | 'chalkboard_memories' | 'comic_pop' | 'dreamy_clouds' | 'aurora_borealis' | 'rose_gold_glam' | 'vintage_rose' | 'midnight_blue' | 'vibrant_rainbow' | 'marble_luxury' | 'emerald_aurum' | 'velvet_wine' | 'cyber_sunset';
+  templateId: 'midnight_luxury' | 'memory_lane' | 'neon_party' | 'minimal_love' | 'golden_glimmer' | 'retro_pop' | 'cyber_punk' | 'classic' | 'sweet_sakura' | 'midnight_forest' | 'galactic_odyssey' | 'sunset_boulevard' | 'royal_velvet' | 'ocean_breeze' | 'disco_fever' | 'chalkboard_memories' | 'comic_pop' | 'dreamy_clouds' | 'aurora_borealis' | 'rose_gold_glam' | 'vintage_rose' | 'midnight_blue' | 'vibrant_rainbow' | 'marble_luxury' | 'emerald_aurum' | 'velvet_wine' | 'cyber_sunset' | 'forest_magic' | 'cosmic_aurora' | 'sunset_romance' | 'lavender_dreams' | 'neon_nights' | 'warm_honey' | 'icy_frost' | 'passion_red' | 'mint_garden' | 'pearl_shimmer';
   photos: Array<{ url: string; caption: string }>;
   customMessage: string;
   aiWish: {

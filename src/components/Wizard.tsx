@@ -353,6 +353,126 @@ const TEMPLATES = [
     mockAccent: "bg-gradient-to-r from-[#f43f5e] to-[#ffaa00] bg-clip-text text-transparent font-extrabold uppercase",
     mockFont: "font-sans",
     mockBtn: "bg-gradient-to-r from-[#f43f5e] to-[#ffaa00] text-white font-semibold"
+  },
+  {
+    id: "forest_magic",
+    name: "Forest Magic",
+    theme: "Deep Green & Emerald Shimmer",
+    desc: "Enchanted deep forest green, mystical emerald glow, nature-inspired mystical design.",
+    mockBg: "bg-gradient-to-tr from-[#0d2818] via-[#1a4d2e] to-[#051f10]",
+    mockCard: "bg-black/40 border border-emerald-500/25 shadow-[0_0_15px_rgba(16,185,129,0.15)] text-zinc-100",
+    mockText: "text-emerald-50",
+    mockAccent: "bg-gradient-to-r from-emerald-400 to-cyan-300 bg-clip-text text-transparent font-bold font-serif",
+    mockFont: "font-serif",
+    mockBtn: "bg-gradient-to-r from-emerald-600 to-green-600 text-white"
+  },
+  {
+    id: "cosmic_aurora",
+    name: "Cosmic Aurora",
+    theme: "Purple & Cyan Northern Lights",
+    desc: "Otherworldly cosmic aurora waves, glowing cyan to deep purple gradient, ethereal digital theme.",
+    mockBg: "bg-gradient-to-b from-[#1a0d35] via-[#2d1b5e] to-[#0c0220]",
+    mockCard: "bg-[#16082e]/70 border border-cyan-400/20 shadow-[0_0_15px_rgba(34,211,238,0.15)] text-cyan-100",
+    mockText: "text-zinc-200",
+    mockAccent: "bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 bg-clip-text text-transparent font-bold font-sans",
+    mockFont: "font-sans",
+    mockBtn: "bg-gradient-to-r from-cyan-500 to-purple-600 text-white"
+  },
+  {
+    id: "sunset_romance",
+    name: "Sunset Romance",
+    theme: "Warm Orange to Purple Gradient",
+    desc: "Romantic warm sunset palette transitioning to deep purple, intimate warm glow aesthetic.",
+    mockBg: "bg-gradient-to-tr from-[#ff6b35] via-[#f7931e] to-[#7d2a4f]",
+    mockCard: "bg-white/10 border border-white/15 shadow-[0_0_15px_rgba(255,255,255,0.1)] text-zinc-100",
+    mockText: "text-white",
+    mockAccent: "bg-gradient-to-r from-yellow-200 via-pink-200 to-purple-300 bg-clip-text text-transparent font-bold",
+    mockFont: "font-sans",
+    mockBtn: "bg-gradient-to-r from-orange-500 to-purple-600 text-white"
+  },
+  {
+    id: "lavender_dreams",
+    name: "Lavender Dreams",
+    theme: "Soft Lavender & Silver Mist",
+    desc: "Dreamy soft lavender background, silver shimmer highlights, peaceful romantic aesthetic.",
+    mockBg: "bg-[#f3e5f5]",
+    mockCard: "bg-white/80 border border-purple-200/40 shadow-sm text-purple-950",
+    mockText: "text-purple-900",
+    mockAccent: "text-purple-600 font-serif italic font-bold",
+    mockFont: "font-serif",
+    mockBtn: "bg-purple-500 text-white"
+  },
+  {
+    id: "neon_nights",
+    name: "Neon Nights",
+    theme: "Electric Pink & Cyan Grid",
+    desc: "Retro arcade neon grid pattern, glowing electric pink and cyan, cyberpunk nightlife vibe.",
+    mockBg: "bg-[#0a0e27] border border-pink-500/20",
+    mockCard: "bg-black/70 border border-cyan-500/30 shadow-[0_0_15px_rgba(0,255,255,0.2)] text-zinc-100",
+    mockText: "text-white",
+    mockAccent: "bg-gradient-to-r from-pink-500 to-cyan-400 bg-clip-text text-transparent font-bold font-mono",
+    mockFont: "font-mono",
+    mockBtn: "bg-gradient-to-r from-pink-600 to-cyan-600 text-white font-bold"
+  },
+  {
+    id: "warm_honey",
+    name: "Warm Honey",
+    theme: "Honey Gold & Warm Caramel",
+    desc: "Warm honey golden tones, sweet caramel highlights, cozy intimate celebration feel.",
+    mockBg: "bg-[#fef8e7]",
+    mockCard: "bg-white/85 border border-amber-300/50 shadow-sm text-amber-950",
+    mockText: "text-amber-900",
+    mockAccent: "text-amber-700 font-serif italic font-bold",
+    mockFont: "font-serif",
+    mockBtn: "bg-amber-600 text-white"
+  },
+  {
+    id: "icy_frost",
+    name: "Icy Frost",
+    theme: "Pale Blue & Frosty Silver",
+    desc: "Crisp icy blue frozen aesthetic, frosty silver sparkles, cool refreshing elegant look.",
+    mockBg: "bg-gradient-to-tr from-[#e0f2fe] to-[#cffafe]",
+    mockCard: "bg-white/70 border border-cyan-200/60 shadow-sm text-cyan-950",
+    mockText: "text-cyan-900",
+    mockAccent: "text-cyan-700 font-mono font-bold uppercase",
+    mockFont: "font-mono",
+    mockBtn: "bg-cyan-600 text-white"
+  },
+  {
+    id: "passion_red",
+    name: "Passion Red",
+    theme: "Deep Red & Glowing Gold Accents",
+    desc: "Deep passionate red background, warm glowing gold text highlights, intense romantic vibes.",
+    mockBg: "bg-[#660000] border border-[#ffd700]/30",
+    mockCard: "bg-black/50 border border-[#ffd700]/35 shadow-[0_0_15px_rgba(255,215,0,0.2)] text-zinc-100",
+    mockText: "text-zinc-200",
+    mockAccent: "bg-gradient-to-r from-[#ffd700] to-[#ffed4e] bg-clip-text text-transparent font-serif font-bold italic",
+    mockFont: "font-serif",
+    mockBtn: "bg-[#ffd700] text-[#660000] font-semibold"
+  },
+  {
+    id: "mint_garden",
+    name: "Mint Garden",
+    theme: "Fresh Mint & Sage Green",
+    desc: "Fresh garden mint green palette, sage accents, natural calming botanical aesthetic.",
+    mockBg: "bg-[#f0fdf4]",
+    mockCard: "bg-white/80 border border-green-200/50 shadow-sm text-green-950",
+    mockText: "text-green-900",
+    mockAccent: "text-green-700 font-sans font-semibold",
+    mockFont: "font-sans",
+    mockBtn: "bg-green-600 text-white"
+  },
+  {
+    id: "pearl_shimmer",
+    name: "Pearl Shimmer",
+    theme: "Pearl White & Iridescent Glow",
+    desc: "Elegant pearl white canvas, delicate iridescent shimmer effects, refined luxury aesthetic.",
+    mockBg: "bg-[#fafbfc]",
+    mockCard: "bg-white border border-gray-200 shadow-md text-gray-800",
+    mockText: "text-gray-700",
+    mockAccent: "bg-gradient-to-r from-pink-300 via-purple-300 to-blue-300 bg-clip-text text-transparent font-serif font-bold",
+    mockFont: "font-serif",
+    mockBtn: "bg-gradient-to-r from-pink-400 to-blue-400 text-white"
   }
 ];
 
