@@ -4,6 +4,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { Sparkles, X, Send, Bot, User, Check, MessageSquare, Copy } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { chatWithAICopilot } from "@/app/actions/ai";
+import { useTranslation } from "@/hooks/useTranslation";
 
 function CopyButton({ text }: { text: string }) {
   const [copied, setCopied] = useState(false);
@@ -40,17 +41,27 @@ interface AICopilotProps {
 }
 
 export default function AICopilot({ context, onApplyText }: AICopilotProps) {
+  const { t, currentLang } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
   const [model, setModel] = useState<"gemini" | "chatgpt">("gemini");
-  const [messages, setMessages] = useState<Array<{ sender: "user" | "copilot"; text: string }>>([
-    {
-      sender: "copilot",
-      text: `Hello! I am your Memora Storytelling Assistant. Tell me about the birthday recipient, or ask me for writing suggestions! I can write emotional messages, caption lists, or help you brainstorm custom memories.`,
-    },
-  ]);
+  const [messages, setMessages] = useState<Array<{ sender: "user" | "copilot"; text: string }>>([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setMessages((prev) => {
+      if (prev.length === 0 || (prev.length === 1 && prev[0].sender === "copilot")) {
+        return [
+          {
+            sender: "copilot",
+            text: t("copilotWelcome") || `Hello! I am your Memora Storytelling Assistant. Tell me about the birthday recipient, or ask me for writing suggestions! I can write emotional messages, caption lists, or help you brainstorm custom memories.`,
+          },
+        ];
+      }
+      return prev;
+    });
+  }, [currentLang, t]);
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -74,7 +85,8 @@ export default function AICopilot({ context, onApplyText }: AICopilotProps) {
           relationship: context.relationship,
           customMessage: context.customMessage,
         },
-        model
+        model,
+        currentLang
       );
       setMessages((prev) => [...prev, { sender: "copilot", text: response }]);
     } catch (err) {
@@ -141,8 +153,8 @@ export default function AICopilot({ context, onApplyText }: AICopilotProps) {
                   <Bot size={16} />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-xs text-white leading-tight">Memora AI Copilot</h3>
-                  <span className="text-[9px] text-zinc-500 font-mono">Creative Writing Assistant</span>
+                  <h3 className="font-semibold text-xs text-white leading-tight">{t("copilotTitle") || "Memora AI Copilot"}</h3>
+                  <span className="text-[9px] text-zinc-500 font-mono">{t("copilotSubtitle") || "Creative Writing Assistant"}</span>
                 </div>
               </div>
               <button
@@ -239,7 +251,7 @@ export default function AICopilot({ context, onApplyText }: AICopilotProps) {
                                 }}
                                 className="flex items-center gap-1 py-1 px-2 bg-zinc-900 hover:bg-purple-950/20 hover:text-purple-400 border border-zinc-850 rounded-lg text-[9px] text-zinc-400 tracking-tight transition-all cursor-pointer"
                               >
-                                <Check size={8} /> Apply this
+                                <Check size={8} /> {t("applyThis") || "Apply this"}
                               </button>
                             )
                         )}
@@ -271,7 +283,7 @@ export default function AICopilot({ context, onApplyText }: AICopilotProps) {
                 }
                 className="py-1 px-3 bg-zinc-950 border border-zinc-900 hover:border-purple-500/40 text-[10px] text-zinc-400 hover:text-white rounded-full transition-all cursor-pointer inline-block"
               >
-                💡 Suggest memories
+                {t("suggestMemories") || "💡 Suggest memories"}
               </button>
               <button
                 onClick={() =>
@@ -279,7 +291,7 @@ export default function AICopilot({ context, onApplyText }: AICopilotProps) {
                 }
                 className="py-1 px-3 bg-zinc-950 border border-zinc-900 hover:border-purple-500/40 text-[10px] text-zinc-400 hover:text-white rounded-full transition-all cursor-pointer inline-block"
               >
-                📸 Photo captions
+                {t("photoCaptions") || "📸 Photo captions"}
               </button>
               <button
                 onClick={() =>
@@ -287,7 +299,7 @@ export default function AICopilot({ context, onApplyText }: AICopilotProps) {
                 }
                 className="py-1 px-3 bg-zinc-950 border border-zinc-900 hover:border-purple-500/40 text-[10px] text-zinc-400 hover:text-white rounded-full transition-all cursor-pointer inline-block"
               >
-                ✍️ Write an Intro
+                {t("writeIntro") || "✍️ Write an Intro"}
               </button>
             </div>
 
@@ -303,7 +315,7 @@ export default function AICopilot({ context, onApplyText }: AICopilotProps) {
                 type="text"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                placeholder="Ask Copilot what to write..."
+                placeholder={t("copilotInputPlaceholder") || "Ask Copilot what to write..."}
                 className="flex-grow bg-zinc-900/60 border border-zinc-850 rounded-xl px-3.5 py-2 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-purple-500"
               />
               <button

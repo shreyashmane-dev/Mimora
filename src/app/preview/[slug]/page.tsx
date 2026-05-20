@@ -5,8 +5,10 @@ import { useParams, useRouter } from "next/navigation";
 import { getProjectBySlug, MemoraProject } from "@/lib/firebase";
 import { 
   Sparkles, Music, Volume2, VolumeX, ArrowRight, ArrowLeft, 
-  RotateCcw, Heart, Gift, MessageCircle, Share2
+  RotateCcw, Heart, Gift, MessageCircle, Share2,
+  Calendar, Copy, Check, Lock, Unlock
 } from "lucide-react";
+import { TRANSLATIONS, Language } from "@/lib/translations";
 import { motion, AnimatePresence } from "framer-motion";
 import confetti from "canvas-confetti";
 
@@ -162,6 +164,78 @@ const THEMES: Record<string, {
     accentText: "text-indigo-600 font-serif italic",
     fontClass: "font-serif",
     btnClass: "bg-indigo-600 hover:bg-indigo-500 text-white shadow-sm",
+  },
+  aurora_borealis: {
+    bgClass: "bg-[#010712] relative before:absolute before:inset-0 before:bg-[radial-gradient(rgba(16,185,129,0.06)_1.2px,transparent_1.2px)] before:[background-size:24px_24px]",
+    cardClass: "bg-[#021f1d]/75 border border-emerald-500/35 shadow-[0_0_30px_rgba(16,185,129,0.12)] text-zinc-150 backdrop-blur-md",
+    textColor: "text-zinc-200",
+    accentText: "text-gradient bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-400 font-sans font-bold tracking-wide",
+    fontClass: "font-poppins",
+    btnClass: "bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white shadow-[0_0_15px_rgba(16,185,129,0.3)]",
+  },
+  rose_gold_glam: {
+    bgClass: "bg-gradient-to-tr from-[#faf0ec] via-[#f7e4dd] to-[#fcf5f2] relative before:absolute before:inset-0 before:bg-[radial-gradient(#b37c6d_1px,transparent_1px)] before:[background-size:32px_32px] before:opacity-10",
+    cardClass: "bg-white/85 border border-[#e5c2b3]/50 shadow-[0_12px_40px_rgba(179,124,109,0.08)] text-[#5c3e35] backdrop-blur-sm",
+    textColor: "text-[#6e4e44] font-serif",
+    accentText: "text-[#b37c6d] font-serif italic font-bold",
+    fontClass: "font-serif",
+    btnClass: "bg-[#b37c6d] hover:bg-[#a26a5b] text-white shadow-md shadow-[#b37c6d]/20",
+  },
+  vintage_rose: {
+    bgClass: "bg-[#faf2ee] text-[#5c4a45] relative before:absolute before:inset-0 before:bg-[radial-gradient(#b8877e_1.2px,transparent_1.2px)] before:[background-size:24px_24px] before:opacity-10",
+    cardClass: "bg-white/85 border border-[#e8d2cb] shadow-[0_8px_32px_rgba(184,135,126,0.1)] text-[#5c4a45] backdrop-blur-sm",
+    textColor: "text-[#705852] font-serif",
+    accentText: "text-[#b8877e] font-serif italic font-bold",
+    fontClass: "font-serif",
+    btnClass: "bg-[#b8877e] hover:bg-[#a6756c] text-white shadow-[0_4px_12px_rgba(184,135,126,0.2)]",
+  },
+  midnight_blue: {
+    bgClass: "bg-radial from-[#051636] via-[#020b1c] to-[#00040d] text-white",
+    cardClass: "bg-[#0b224d]/60 border border-slate-400/20 shadow-[0_0_30px_rgba(148,163,184,0.15)] text-slate-200 backdrop-blur-md",
+    textColor: "text-slate-200",
+    accentText: "text-gradient bg-gradient-to-r from-slate-200 to-indigo-300 font-bold",
+    fontClass: "font-poppins",
+    btnClass: "bg-indigo-650 hover:bg-indigo-500 text-white shadow-[0_0_15px_rgba(99,102,241,0.3)]",
+  },
+  vibrant_rainbow: {
+    bgClass: "bg-gradient-to-tr from-[#ffe6e6] via-[#e6f9ff] to-[#e6ffe6] text-[#2c1c38] relative before:absolute before:inset-0 before:bg-[radial-gradient(rgba(120,50,250,0.05)_1.5px,transparent_1.5px)] before:[background-size:24px_24px]",
+    cardClass: "bg-white/90 border border-purple-200/50 shadow-[0_12px_40px_rgba(168,85,247,0.1)] text-[#2c1c38] backdrop-blur-sm",
+    textColor: "text-[#3c2a4c] font-sans",
+    accentText: "text-gradient bg-gradient-to-r from-red-500 via-purple-650 to-blue-500 font-sans font-black tracking-wide",
+    fontClass: "font-poppins",
+    btnClass: "bg-gradient-to-r from-red-500 via-purple-600 to-blue-500 text-white hover:opacity-90 shadow-md",
+  },
+  marble_luxury: {
+    bgClass: "bg-[#0c0d10] text-[#f7f2eb] relative before:absolute before:inset-0 before:bg-[radial-gradient(rgba(212,175,55,0.08)_1px,transparent_1px)] before:[background-size:30px_30px]",
+    cardClass: "bg-[#141519]/90 border border-[#d4af37]/35 shadow-[0_10px_40px_rgba(0,0,0,0.6)] text-[#f7f2eb] backdrop-blur-md",
+    textColor: "text-[#dfd8cf] font-serif",
+    accentText: "text-gradient bg-gradient-to-r from-[#ffd700] via-[#ffe885] to-[#c79a10] font-serif font-black tracking-wide",
+    fontClass: "font-serif",
+    btnClass: "bg-gradient-to-r from-[#ffd700] to-[#b38600] hover:from-[#ffe34d] hover:to-[#d4a313] text-black font-extrabold shadow-[0_4px_20px_rgba(212,175,55,0.25)]",
+  },
+  emerald_aurum: {
+    bgClass: "bg-radial from-[#042f1a] via-[#02180d] to-[#010c06] text-white relative before:absolute before:inset-0 before:bg-[radial-gradient(rgba(212,175,55,0.06)_1px,transparent_1px)] before:[background-size:24px_24px]",
+    cardClass: "bg-black/40 border border-[#d4af37]/45 shadow-[0_0_35px_rgba(212,175,55,0.2)] text-[#fbf8f3] backdrop-blur-md",
+    textColor: "text-[#e5dfd5] font-serif",
+    accentText: "text-gradient bg-gradient-to-r from-[#ffe485] via-[#ffd700] to-[#aa8000] font-serif font-black italic tracking-wide",
+    fontClass: "font-serif",
+    btnClass: "bg-gradient-to-r from-[#ffd700] to-[#b38600] text-black font-extrabold shadow-[0_0_15px_rgba(212,175,55,0.3)] hover:opacity-90",
+  },
+  velvet_wine: {
+    bgClass: "bg-radial from-[#3a0c1a] via-[#1f040d] to-[#0d0105] text-white relative before:absolute before:inset-0 before:bg-[radial-gradient(rgba(232,210,203,0.05)_1.2px,transparent_1.2px)] before:[background-size:28px_28px]",
+    cardClass: "bg-black/45 border border-[#e8d2cb]/35 shadow-[0_0_30px_rgba(232,210,203,0.15)] text-zinc-150 backdrop-blur-md",
+    textColor: "text-[#f5eae6] font-serif",
+    accentText: "text-gradient bg-gradient-to-r from-[#f5d9d0] via-[#e8b2a0] to-[#b87c65] font-serif font-bold italic",
+    fontClass: "font-serif",
+    btnClass: "bg-gradient-to-r from-[#e8b2a0] to-[#b87c65] text-white hover:opacity-90 shadow-[0_0_15px_rgba(184,124,101,0.35)]",
+  },
+  cyber_sunset: {
+    bgClass: "bg-radial from-[#1e072b] via-[#0d0315] to-[#040108] text-white relative before:absolute before:inset-0 before:bg-[linear-gradient(rgba(244,63,94,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(244,63,94,0.02)_1px,transparent_1px)] before:[background-size:24px_24px]",
+    cardClass: "bg-[#0e0317]/80 border border-[#f43f5e]/45 shadow-[0_0_30px_rgba(244,63,94,0.2)] text-[#ffcc00] backdrop-blur-md",
+    textColor: "text-zinc-200",
+    accentText: "text-gradient bg-gradient-to-r from-[#f43f5e] via-[#fb7185] to-[#ffaa00] font-sans font-black tracking-wider uppercase",
+    fontClass: "font-poppins",
+    btnClass: "bg-gradient-to-r from-[#f43f5e] to-[#ffaa00] text-white hover:opacity-90 font-bold shadow-[0_0_20px_rgba(244,63,94,0.4)]",
   }
 };
 
@@ -196,6 +270,14 @@ export default function PublicMicrositePage() {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const playPromiseRef = useRef<Promise<void> | null>(null);
 
+  // Surprise Lock and Google Translation state hooks
+  const [isLocked, setIsLocked] = useState(false);
+  const [isTransitioning, setIsTransitioning] = useState(false);
+  const [timeLeft, setTimeLeft] = useState<{ days: number; hours: number; minutes: number; seconds: number } | null>(null);
+  const [msgIndex, setMsgIndex] = useState(0);
+  const [copied, setCopied] = useState(false);
+  const [showComeBackMsg, setShowComeBackMsg] = useState(false);
+
   // Fetch Project
   useEffect(() => {
     if (!slug) return;
@@ -203,6 +285,12 @@ export default function PublicMicrositePage() {
       try {
         const data = await getProjectBySlug(slug);
         setProject(data);
+        if (data?.unlockAt) {
+          const unlockTime = new Date(data.unlockAt).getTime();
+          if (Date.now() < unlockTime) {
+            setIsLocked(true);
+          }
+        }
       } catch (err) {
         console.error("Error loading microsite:", err);
       } finally {
@@ -211,6 +299,189 @@ export default function PublicMicrositePage() {
     };
     fetchProject();
   }, [slug]);
+
+  // Google Translate widget setup
+  useEffect(() => {
+    const addGoogleTranslateScript = () => {
+      if (typeof window === "undefined") return;
+      if (document.getElementById("google-translate-script")) return;
+      const script = document.createElement("script");
+      script.id = "google-translate-script";
+      script.type = "text/javascript";
+      script.src = "https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit";
+      script.async = true;
+      document.body.appendChild(script);
+
+      (window as any).googleTranslateElementInit = () => {
+        new (window as any).google.translate.TranslateElement(
+          {
+            pageLanguage: "en",
+            includedLanguages: "en,hi,mr",
+            layout: (window as any).google.translate.TranslateElement.InlineLayout.SIMPLE,
+            autoDisplay: false,
+          },
+          "google_translate_element"
+        );
+      };
+    };
+
+    addGoogleTranslateScript();
+  }, []);
+
+  // Countdown timer loop
+  useEffect(() => {
+    if (!project?.unlockAt || !isLocked) return;
+
+    const unlockTime = new Date(project.unlockAt).getTime();
+
+    const updateTimer = () => {
+      const diff = unlockTime - Date.now();
+      if (diff <= 0) {
+        setTimeLeft(null);
+        setIsTransitioning(true);
+        
+        // Swell ambient music volume to dramatic high, if it is playing
+        if (audioRef.current) {
+          audioRef.current.volume = 0.9;
+        }
+
+        // Fling high-fidelity confetti bursts from both sides
+        const fireConfetti = () => {
+          confetti({
+            particleCount: 80,
+            angle: 60,
+            spread: 55,
+            origin: { x: 0, y: 0.8 },
+            colors: ['#a855f7', '#ec4899', '#3b82f6', '#10b981', '#ffd700']
+          });
+          confetti({
+            particleCount: 80,
+            angle: 120,
+            spread: 55,
+            origin: { x: 1, y: 0.8 },
+            colors: ['#a855f7', '#ec4899', '#3b82f6', '#10b981', '#ffd700']
+          });
+        };
+
+        // Fire once immediately
+        fireConfetti();
+        
+        // Fire again at 400ms and 800ms to make it extremely premium
+        setTimeout(fireConfetti, 400);
+        setTimeout(fireConfetti, 800);
+
+        // Transition the layout smoothly after the visual flash finishes
+        setTimeout(() => {
+          setIsTransitioning(false);
+          setIsLocked(false);
+          setSlideIndex(0); // Transition into birthday cover intro!
+
+          // Automatically transition from suspense ambient music to the main birthday track
+          if (project) {
+            const hasInteractedBefore = isPlaying; // If they enabled ambient audio
+            if (audioRef.current) {
+              audioRef.current.pause();
+            }
+            
+            const mainMusicUrl = MUSIC_URLS[project.music] || MUSIC_URLS.emotional_piano;
+            audioRef.current = new Audio(mainMusicUrl);
+            audioRef.current.loop = true;
+            audioRef.current.volume = 0.55;
+            
+            // Only autoplay if they had already activated the sound
+            if (hasInteractedBefore) {
+              audioRef.current.play()
+                .then(() => setIsPlaying(true))
+                .catch(err => console.error("Could not autoplay main track:", err));
+            }
+          }
+        }, 2800);
+      } else {
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+        const minutes = Math.floor((diff / (1000 * 60)) % 60);
+        const seconds = Math.floor((diff / 1000) % 60);
+        setTimeLeft({ days, hours, minutes, seconds });
+      }
+    };
+
+    updateTimer();
+    const interval = setInterval(updateTimer, 1000);
+    return () => clearInterval(interval);
+  }, [project?.unlockAt, isLocked]);
+
+  // Cycle suspense message index every 8000ms
+  useEffect(() => {
+    if (!isLocked) return;
+    const msgInterval = setInterval(() => {
+      setMsgIndex((prev) => (prev + 1) % 5);
+    }, 8000);
+    return () => clearInterval(msgInterval);
+  }, [isLocked]);
+
+  const startLockedAmbientMusic = () => {
+    if (!audioRef.current && project) {
+      const musicUrl = MUSIC_URLS.cinematic_ambient;
+      audioRef.current = new Audio(musicUrl);
+      audioRef.current.loop = true;
+      audioRef.current.volume = 0.2; // soft volume during waiting
+      
+      const playPromise = audioRef.current.play();
+      playPromiseRef.current = playPromise;
+      playPromise
+        .then(() => {
+          setIsPlaying(true);
+          setAudioLoaded(true);
+        })
+        .catch(err => {
+          console.error("Autoplay blocked or failed:", err);
+          setAudioLoaded(true);
+        });
+    }
+  };
+
+  const buildGoogleCalendarUrl = (unlockAt: string, name: string) => {
+    const dateObj = new Date(unlockAt);
+    const formatDate = (date: Date) => {
+      return date.toISOString().replace(/[-:]/g, "").split(".")[0] + "Z";
+    };
+    const start = formatDate(dateObj);
+    const end = formatDate(new Date(dateObj.getTime() + 60 * 60 * 1000));
+    
+    const title = encodeURIComponent(`🎉 Memora Surprise for ${name}!`);
+    const details = encodeURIComponent(`The beautiful cinematic birthday surprise experience is unlocking now! Open this link: ${typeof window !== "undefined" ? window.location.href : ""}`);
+    return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${start}/${end}&details=${details}`;
+  };
+
+  const getHappyBirthdayText = (name: string, age: number, dict: any) => {
+    return (dict.happyBirthdayText || "Happy {age}th Birthday, {name}!")
+      .replace("{name}", name)
+      .replace("{age}", age.toString());
+  };
+
+  const SUSPENSE_MESSAGES = {
+    en: [
+      "Some moments are worth waiting for ✨",
+      "Your surprise is almost here ❤️",
+      "A beautiful memory is about to unfold.",
+      "Not yet… the magic begins soon.",
+      "Every second brings you closer to something special."
+    ],
+    hi: [
+      "कुछ पलों का इंतज़ार हमेशा खूबसूरत होता है ✨",
+      "आपका सरप्राइज़ बस आने ही वाला है ❤️",
+      "एक बेहद खूबसूरत याद बस शुरू होने वाली है।",
+      "अभी नहीं... जादू बस कुछ ही पलों में शुरू होगा।",
+      "हर एक सेकंड आपको किसी बेहद खास याद के करीब ला रहा है।"
+    ],
+    mr: [
+      "काही क्षणांची वाट पाहणे नेहमीच गोड असते ✨",
+      "तुमचे सरप्राईज अगदी जवळ आले आहे ❤️",
+      "एक सुंदर आठवण आता उलगडणार आहे.",
+      "अजून नाही... जादू लवकरच सुरू होईल.",
+      "प्रत्येक सेकंद तुम्हाला काहीतरी विशेष आठवणीच्या जवळ आणत आहे।"
+    ]
+  };
 
   // Handle music setup on slide transitions
   const startExperience = () => {
@@ -371,9 +642,220 @@ export default function PublicMicrositePage() {
   }
 
   const theme = THEMES[project.templateId] || THEMES.midnight_luxury;
+  const lang: Language = (project.language as Language) || "en";
+  const dict = TRANSLATIONS;
+
+  if (isLocked) {
+    const currentUrl = typeof window !== "undefined" ? window.location.href : "";
+    const calendarUrl = project.unlockAt ? buildGoogleCalendarUrl(project.unlockAt, project.recipientName) : "";
+
+    return (
+      <div 
+        onClick={startLockedAmbientMusic}
+        className={`min-h-screen flex flex-col justify-between overflow-x-hidden relative ${theme.bgClass} ${theme.fontClass} transition-colors duration-1000 select-none`}
+      >
+        {/* Floating Google Translate Switcher */}
+        <div className="absolute top-6 left-6 z-50 flex items-center gap-2">
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/40 hover:bg-black/70 border border-white/10 backdrop-blur-md transition-all duration-300">
+            <span className="text-[10px] uppercase tracking-wider text-zinc-400 font-mono">Lang:</span>
+            <div id="google_translate_element" className="google-translate-styled" />
+          </div>
+        </div>
+
+        {/* Ambient music toggle */}
+        {audioLoaded && (
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              toggleMute();
+            }}
+            className="fixed top-6 right-6 z-50 p-3 rounded-full backdrop-blur-md bg-black/40 hover:bg-black/70 border border-white/10 text-white cursor-pointer transition-all duration-300"
+            title={isPlaying ? "Mute Background Music" : "Play Background Music"}
+          >
+            {isPlaying ? <Volume2 size={18} /> : <VolumeX size={18} />}
+          </button>
+        )}
+
+        {/* Ambient background decoration */}
+        <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden opacity-30">
+          <div className="absolute -top-[10%] -left-[10%] w-[80vw] h-[80vw] max-w-[600px] rounded-full bg-purple-650/10 blur-[120px] animate-cosmic-drift" />
+          <div className="absolute -bottom-[10%] -right-[10%] w-[80vw] h-[80vw] max-w-[600px] rounded-full bg-pink-650/10 blur-[120px] animate-cosmic-drift [animation-delay:4s]" />
+        </div>
+
+        <header className="w-full max-w-6xl mx-auto px-6 py-6 flex items-center justify-between z-10 relative">
+          <div className="flex items-center gap-1.5">
+            <Lock size={14} className="text-purple-400 animate-pulse" />
+            <span className="text-[10px] tracking-widest font-mono opacity-60 uppercase">
+              {dict.specialSurpriseAwaits}
+            </span>
+          </div>
+        </header>
+
+        <main className="flex-grow flex items-center justify-center max-w-3xl mx-auto w-full px-6 z-10 relative py-12">
+          <div className="text-center flex flex-col items-center w-full">
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ duration: 0.8 }}
+              className={`p-8 md:p-12 rounded-3xl backdrop-blur-md ${theme.cardClass} max-w-xl w-full flex flex-col items-center relative overflow-hidden`}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-purple-500 via-pink-500 to-yellow-500" />
+              
+              {/* Suspense message / Status */}
+              <div className="flex items-center gap-2 mb-6">
+                <Lock size={16} className="text-purple-400 animate-pulse" />
+                <span className="text-xs font-mono uppercase tracking-widest text-purple-400 glow-text">
+                  {dict.specialSurpriseAwaits.replace("🔒", "").trim()}
+                </span>
+              </div>
+
+              <h1 className="text-2xl md:text-4xl font-serif text-white tracking-wide leading-tight mb-3">
+                {dict.capsuleUnlocksSoon}
+              </h1>
+
+              {/* Suspense message cycling */}
+              <div className="text-xs font-light mb-8 max-w-sm h-6 overflow-hidden text-purple-300 italic flex items-center justify-center">
+                <AnimatePresence mode="wait">
+                  <motion.span
+                    key={msgIndex}
+                    initial={{ y: 15, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    exit={{ y: -15, opacity: 0 }}
+                    transition={{ duration: 0.5 }}
+                    className="block"
+                  >
+                    {SUSPENSE_MESSAGES[lang]?.[msgIndex] || SUSPENSE_MESSAGES.en[msgIndex]}
+                  </motion.span>
+                </AnimatePresence>
+              </div>
+
+              {/* Countdown Timer cells with hover glow effect */}
+              {timeLeft ? (
+                <div className="grid grid-cols-4 gap-3 md:gap-4 w-full mb-8 max-w-md">
+                  {[
+                    { value: timeLeft.days, label: dict.days },
+                    { value: timeLeft.hours, label: dict.hours },
+                    { value: timeLeft.minutes, label: dict.minutes },
+                    { value: timeLeft.seconds, label: dict.seconds }
+                  ].map((cell, idx) => (
+                    <div 
+                      key={idx}
+                      className="group relative flex flex-col items-center justify-center p-3 md:p-4 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-lg hover:border-purple-500/40 hover:shadow-[0_0_20px_rgba(168,85,247,0.25)] transition-all duration-500"
+                    >
+                      <span className="text-2xl md:text-4xl font-mono font-bold text-white group-hover:scale-105 transition-transform duration-300">
+                        {String(cell.value).padStart(2, "0")}
+                      </span>
+                      <span className="text-[9px] md:text-[10px] font-mono uppercase tracking-wider text-zinc-500 group-hover:text-purple-400 transition-colors duration-300 mt-1">
+                        {cell.label}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="flex flex-col items-center py-4 mb-8">
+                  <div className="h-8 w-8 animate-spin rounded-full border-4 border-purple-500 border-t-transparent mb-3" />
+                  <p className="text-sm font-mono text-purple-400">Unveiling beautiful birthday capsule...</p>
+                </div>
+              )}
+
+              {/* CTA and Share Actions */}
+              <div className="flex flex-col sm:flex-row gap-3 w-full justify-center">
+                {calendarUrl && (
+                  <a
+                    href={calendarUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-center gap-2 py-3 px-6 rounded-full border border-white/10 hover:bg-white/5 text-zinc-300 hover:text-white transition-colors cursor-pointer text-xs font-medium"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <Calendar size={14} />
+                    {dict.addToGoogleCalendar}
+                  </a>
+                )}
+                
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    navigator.clipboard.writeText(currentUrl);
+                    setCopied(true);
+                    setTimeout(() => setCopied(false), 2000);
+                  }}
+                  className={`flex items-center justify-center gap-2 py-3 px-6 rounded-full font-medium text-xs transition-transform hover:scale-105 cursor-pointer ${theme.btnClass}`}
+                >
+                  {copied ? <Check size={14} className="text-green-300 animate-ping" /> : <Copy size={14} />}
+                  {copied ? dict.copied : dict.copySurpriseLink}
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        </main>
+
+        <footer className="w-full max-w-6xl mx-auto px-6 py-6 flex items-center justify-center opacity-40 z-10 relative">
+          <span className="text-[9px] font-mono tracking-widest uppercase">
+            Curated with Memora
+          </span>
+        </footer>
+
+        {/* Styles to inject Google Translate customizations */}
+        <style dangerouslySetInnerHTML={{ __html: `
+          .google-translate-styled {
+            display: inline-block;
+          }
+          .goog-te-gadget-simple {
+            background-color: transparent !important;
+            border: none !important;
+            padding: 0 !important;
+            font-family: inherit !important;
+            font-size: 11px !important;
+            cursor: pointer !important;
+          }
+          .goog-te-gadget-simple img {
+            display: none !important;
+          }
+          .goog-te-gadget-simple .goog-te-menu-value {
+            color: #d4d4d8 !important;
+            font-weight: 500 !important;
+            margin: 0 !important;
+            text-transform: uppercase !important;
+            letter-spacing: 0.05em !important;
+          }
+          .goog-te-gadget-simple .goog-te-menu-value span {
+            color: #d4d4d8 !important;
+          }
+          .goog-te-gadget-simple .goog-te-menu-value span:hover {
+            color: #fff !important;
+          }
+          .goog-te-gadget-simple .goog-te-menu-value span:nth-child(3) {
+            display: none !important;
+          }
+          .goog-te-menu-frame {
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5) !important;
+            border: 1px solid rgba(255,255,255,0.1) !important;
+            border-radius: 8px !important;
+            background-color: #18181b !important;
+          }
+          .skiptranslate iframe {
+            visibility: hidden !important;
+            display: none !important;
+          }
+          body {
+            top: 0px !important;
+          }
+        `}} />
+      </div>
+    );
+  }
 
   return (
     <div className={`min-h-screen flex flex-col justify-between overflow-x-hidden relative ${theme.bgClass} ${theme.fontClass} transition-colors duration-1000`}>
+      {/* Floating Google Translate Switcher in Unlocked View */}
+      <div className="absolute top-6 left-6 z-50 flex items-center gap-2">
+        <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/40 hover:bg-black/70 border border-white/10 backdrop-blur-md transition-all duration-300">
+          <span className="text-[10px] uppercase tracking-wider text-zinc-400 font-mono">Lang:</span>
+          <div id="google_translate_element" className="google-translate-styled" />
+        </div>
+      </div>
       
       {/* Cinematic Ambient Effects matching each theme */}
       {project.templateId === "midnight_luxury" && (
@@ -487,6 +969,75 @@ export default function PublicMicrositePage() {
         </div>
       )}
 
+      {project.templateId === "aurora_borealis" && (
+        <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden opacity-60">
+          <div className="absolute top-0 left-1/4 w-[150vw] h-[60vh] bg-gradient-to-r from-emerald-500/10 via-teal-500/15 to-transparent blur-[120px] transform -rotate-12 origin-top-left animate-cosmic-drift" />
+          <div className="absolute top-1/4 right-0 w-[80vw] h-[80vw] max-w-[500px] rounded-full bg-teal-505/5 blur-[100px] animate-neon-flare" />
+        </div>
+      )}
+
+      {project.templateId === "rose_gold_glam" && (
+        <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden opacity-40">
+          <div className="absolute inset-0 bg-[radial-gradient(#b37c6d_1.2px,transparent_1.2px)] [background-size:40px_40px] animate-gold-drift opacity-30" />
+          <div className="absolute top-[15%] left-[10%] w-[50vw] h-[50vw] rounded-full bg-pink-200/15 blur-[90px] animate-cosmic-drift" />
+          <div className="absolute bottom-[20%] right-[10%] w-[60vw] h-[60vw] rounded-full bg-[#fce9e2]/30 blur-[100px] animate-cosmic-drift [animation-delay:2s]" />
+        </div>
+      )}
+
+      {project.templateId === "vintage_rose" && (
+        <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden opacity-30">
+          <div className="absolute inset-0 bg-[radial-gradient(#b8877e_1.2px,transparent_1.2px)] [background-size:32px_32px] animate-gold-drift opacity-35" />
+          <div className="absolute top-[20%] right-[10%] w-[50vw] h-[50vw] rounded-full bg-pink-200/10 blur-[80px] animate-cosmic-drift" />
+        </div>
+      )}
+
+      {project.templateId === "midnight_blue" && (
+        <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden opacity-55">
+          <div className="absolute inset-0 bg-[radial-gradient(#ffffff_0.8px,transparent_0.8px)] [background-size:40px_40px] animate-gold-drift opacity-25" />
+          <div className="absolute top-[10%] left-[15%] w-1.5 h-1.5 rounded-full bg-indigo-300 blur-[1px] animate-glimmer-pulse" />
+          <div className="absolute bottom-[25%] right-[20%] w-2 h-2 rounded-full bg-blue-300/40 blur-[1.5px] animate-glimmer-pulse [animation-delay:2s]" />
+        </div>
+      )}
+
+      {project.templateId === "vibrant_rainbow" && (
+        <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden opacity-35">
+          <div className="absolute top-[10%] left-[10%] w-[60vw] h-[60vw] rounded-full bg-red-300/20 blur-[100px] animate-cosmic-drift" />
+          <div className="absolute bottom-[10%] right-[15%] w-[60vw] h-[60vw] rounded-full bg-blue-300/20 blur-[100px] animate-cosmic-drift [animation-delay:3s]" />
+        </div>
+      )}
+
+      {project.templateId === "marble_luxury" && (
+        <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden opacity-50">
+          <div className="absolute inset-0 bg-[radial-gradient(#d4af37_1px,transparent_1px)] [background-size:48px_48px] animate-gold-drift opacity-20" />
+          <div className="absolute top-[20%] left-[20%] w-1.5 h-1.5 rounded-full bg-[#ffd700] blur-[1px] animate-glimmer-pulse" />
+          <div className="absolute bottom-[30%] right-[15%] w-2 h-2 rounded-full bg-[#ffe34d]/40 blur-[1.5px] animate-glimmer-pulse [animation-delay:2.5s]" />
+        </div>
+      )}
+
+      {project.templateId === "emerald_aurum" && (
+        <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden opacity-60">
+          <div className="absolute inset-0 bg-[radial-gradient(#ffd700_1px,transparent_1px)] [background-size:36px_36px] animate-gold-drift opacity-20" />
+          <div className="absolute top-[10%] right-[10%] w-[50vw] h-[50vw] rounded-full bg-emerald-500/5 blur-[120px] animate-cosmic-drift" />
+          <div className="absolute bottom-[20%] left-[20%] w-[60vw] h-[60vw] rounded-full bg-yellow-500/5 blur-[100px] animate-cosmic-drift [animation-delay:3s]" />
+        </div>
+      )}
+
+      {project.templateId === "velvet_wine" && (
+        <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden opacity-50">
+          <div className="absolute inset-0 bg-[radial-gradient(#e8d2cb_1px,transparent_1px)] [background-size:40px_40px] animate-gold-drift opacity-15" />
+          <div className="absolute bottom-[-10%] right-[20%] w-[60vw] h-[60vw] rounded-full bg-[#3a0c1a]/30 blur-[120px] animate-cosmic-drift" />
+          <div className="absolute top-[30%] left-[10%] w-2 h-2 rounded-full bg-[#f5d9d0]/30 blur-[1.5px] animate-float duration-[8000ms]" />
+        </div>
+      )}
+
+      {project.templateId === "cyber_sunset" && (
+        <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden opacity-60">
+          <div className="absolute inset-0 bg-[radial-gradient(#f43f5e_1px,transparent_1px)] [background-size:40px_40px] animate-gold-drift opacity-25" />
+          <div className="absolute top-[15%] left-[20%] w-[50vw] h-[50vw] rounded-full bg-orange-500/10 blur-[90px] animate-neon-flare" />
+          <div className="absolute bottom-[20%] right-[20%] w-[60vw] h-[60vw] rounded-full bg-[#f43f5e]/10 blur-[100px] animate-neon-flare [animation-delay:2.5s]" />
+        </div>
+      )}
+
       {/* Floating Audio Status Button */}
       {audioLoaded && (
         <button
@@ -562,7 +1113,7 @@ export default function PublicMicrositePage() {
                   theme.textColor
                 }`}
               >
-                Something beautiful is waiting for you.
+                {dict.somethingBeautifulAwaits}
               </motion.h1>
 
               <motion.p
@@ -571,7 +1122,7 @@ export default function PublicMicrositePage() {
                 transition={{ delay: 0.7, duration: 0.8 }}
                 className="text-sm text-zinc-400 font-light mb-8 max-w-sm leading-relaxed"
               >
-                This cinematic memory capsule was curated specifically to celebrate you today.
+                {dict.curatedCelebrate}
               </motion.p>
 
               <motion.button
@@ -581,7 +1132,7 @@ export default function PublicMicrositePage() {
                 onClick={startExperience}
                 className={`flex items-center gap-2 py-4 px-8 rounded-full font-medium text-sm transition-all duration-500 transform hover:scale-105 cursor-pointer ${theme.btnClass}`}
               >
-                Unveil the Memories
+                {dict.unveilMemories}
                 <ArrowRight size={16} />
               </motion.button>
             </motion.div>
@@ -599,7 +1150,7 @@ export default function PublicMicrositePage() {
             >
               <div className="space-y-6">
                 <span className="text-[10px] tracking-widest font-mono uppercase opacity-50 block">
-                  — CHAPTER ONE: THE MESSAGE
+                  {dict.chapterOneMessage}
                 </span>
                 
                 <h2 className={`text-2xl md:text-4xl leading-tight font-serif tracking-wide ${theme.textColor}`}>
@@ -620,7 +1171,7 @@ export default function PublicMicrositePage() {
                   onClick={() => setSlideIndex(2)}
                   className={`flex items-center gap-1.5 py-2.5 px-5 rounded-xl font-medium text-xs self-end md:self-auto cursor-pointer transition-transform hover:scale-[1.02] ${theme.btnClass}`}
                 >
-                  View Memories
+                  {dict.viewMemories}
                   <ArrowRight size={14} />
                 </button>
               </div>
@@ -639,10 +1190,10 @@ export default function PublicMicrositePage() {
             >
               <div className="text-center max-w-md mx-auto mb-6">
                 <span className="text-[10px] tracking-widest font-mono uppercase opacity-50 block mb-2">
-                  — CHAPTER TWO: SHARED MOMENTS
+                  {dict.chapterTwoGallery}
                 </span>
                 <h2 className="text-2xl font-serif text-white tracking-wide">
-                  Memory Gallery
+                  {dict.chapterTwoGallery.replace("—", "").trim()}
                 </h2>
               </div>
 
@@ -656,10 +1207,10 @@ export default function PublicMicrositePage() {
                 <div className="w-full space-y-6 flex flex-col justify-between min-h-[460px]">
                   <div className="text-center max-w-md mx-auto">
                     <span className="text-[10px] tracking-widest font-mono uppercase opacity-55 block mb-1">
-                      — CHAPTER TWO: SHARED MOMENTS
+                      {dict.chapterTwoGallery}
                     </span>
                     <h2 className="text-xl font-serif text-white tracking-wide">
-                      Memory Album ({photoIndex + 1} / {project.photos.length})
+                      {dict.chapterTwoGallery.replace("—", "").trim()} ({photoIndex + 1} / {project.photos.length})
                     </h2>
                   </div>
 
@@ -909,13 +1460,13 @@ export default function PublicMicrositePage() {
                       className="flex items-center gap-1.5 py-2 px-3 rounded-xl text-[10px] font-medium text-zinc-400 hover:text-white transition-colors cursor-pointer"
                     >
                       <ArrowLeft size={12} />
-                      View Message
+                      {dict.viewMessage}
                     </button>
                     <button
                       onClick={() => setSlideIndex(3)}
                       className={`flex items-center gap-1 py-2 px-4 rounded-xl font-medium text-[10px] cursor-pointer transition-transform hover:scale-[1.02] ${theme.btnClass}`}
                     >
-                      Unwrap Gift
+                      {dict.unwrapGift}
                       <ArrowRight size={12} />
                     </button>
                   </div>
@@ -944,15 +1495,15 @@ export default function PublicMicrositePage() {
               </motion.div>
 
               <span className="text-[10px] tracking-widest font-mono uppercase opacity-55 block mb-3">
-                — CELEBRATING LIFE
+                {dict.celebratingLife}
               </span>
 
               <h1 className="text-4xl md:text-6xl font-serif text-white tracking-wide leading-tight mb-4">
-                Happy {project.age}th Birthday, <span className={`${theme.accentText}`}>{project.recipientName}</span>!
+                {getHappyBirthdayText(project.recipientName, project.age, dict)}
               </h1>
 
               <p className="text-sm text-zinc-400 font-light mb-10 max-w-sm leading-relaxed">
-                May your day be filled with all the light, laughter, and magic that you bring to those around you.
+                {dict.mayDayFilled}
               </p>
 
               <div className="flex flex-wrap justify-center gap-4">
@@ -964,20 +1515,20 @@ export default function PublicMicrositePage() {
                   className="flex items-center gap-1.5 py-3.5 px-6 rounded-full border border-white/10 hover:bg-white/5 text-zinc-300 hover:text-white transition-colors cursor-pointer text-xs"
                 >
                   <RotateCcw size={14} />
-                  Replay Experience
+                  {dict.replayExperience}
                 </button>
 
                 <a
                   href={project.creatorPhone 
-                    ? `https://api.whatsapp.com/send?phone=${encodeURIComponent(project.creatorPhone)}&text=${encodeURIComponent("Hey ❤️ Thank you so much for this beautiful birthday surprise! It made my day ✨")}`
-                    : `https://api.whatsapp.com/send?text=${encodeURIComponent("Hey ❤️ Thank you so much for this beautiful memory experience! It made my day ✨")}`
+                    ? `https://api.whatsapp.com/send?phone=${encodeURIComponent(project.creatorPhone)}&text=${encodeURIComponent(dict.whatsappThankYouText)}`
+                    : `https://api.whatsapp.com/send?text=${encodeURIComponent(dict.whatsappThankYouText)}`
                   }
                   target="_blank"
                   rel="noopener noreferrer"
                   className={`flex items-center gap-2 py-3.5 px-6 rounded-full font-medium text-xs transition-transform hover:scale-105 cursor-pointer ${theme.btnClass}`}
                 >
                   <MessageCircle size={14} />
-                  Say Thank You!
+                  {dict.sayThankYou}
                 </a>
               </div>
             </motion.div>

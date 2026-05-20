@@ -60,6 +60,7 @@ export interface MemoraUser {
   email: string;
   avatar?: string;
   createdAt: string;
+  preferredLanguage?: 'en' | 'hi' | 'mr';
 }
 
 // Project database schema
@@ -70,7 +71,7 @@ export interface MemoraProject {
   nickname: string;
   age: number;
   relationship: string;
-  templateId: 'midnight_luxury' | 'memory_lane' | 'neon_party' | 'minimal_love' | 'golden_glimmer' | 'retro_pop' | 'cyber_punk' | 'classic' | 'sweet_sakura' | 'midnight_forest' | 'galactic_odyssey' | 'sunset_boulevard' | 'royal_velvet' | 'ocean_breeze' | 'disco_fever' | 'chalkboard_memories' | 'comic_pop' | 'dreamy_clouds';
+  templateId: 'midnight_luxury' | 'memory_lane' | 'neon_party' | 'minimal_love' | 'golden_glimmer' | 'retro_pop' | 'cyber_punk' | 'classic' | 'sweet_sakura' | 'midnight_forest' | 'galactic_odyssey' | 'sunset_boulevard' | 'royal_velvet' | 'ocean_breeze' | 'disco_fever' | 'chalkboard_memories' | 'comic_pop' | 'dreamy_clouds' | 'aurora_borealis' | 'rose_gold_glam' | 'vintage_rose' | 'midnight_blue' | 'vibrant_rainbow' | 'marble_luxury' | 'emerald_aurum' | 'velvet_wine' | 'cyber_sunset';
   photos: Array<{ url: string; caption: string }>;
   customMessage: string;
   aiWish: {
@@ -84,6 +85,10 @@ export interface MemoraProject {
   published: boolean;
   createdAt: string;
   creatorPhone?: string;
+  customCss?: string;
+  unlockAt?: string;
+  timezone?: string;
+  language?: 'en' | 'hi' | 'mr';
 }
 
 // --- MOCK STORAGE FALLBACK SYSTEM ---
@@ -377,5 +382,41 @@ export const deleteProject = async (id: string): Promise<void> => {
     const projects = getMockProjects();
     const filtered = projects.filter(p => p.id !== id);
     saveMockProjects(filtered);
+  }
+};
+
+export const updateMemoraUser = async (userId: string, data: Partial<MemoraUser>): Promise<void> => {
+  if (isFirebaseConfigured && db) {
+    const userRef = doc(db, "users", userId);
+    await setDoc(userRef, data, { merge: true });
+  } else {
+    // Mock Auth state update
+    const current = getMockCurrentUser();
+    if (current && current.uid === userId) {
+      const updated = { ...current, ...data };
+      saveMockCurrentUser(updated);
+      
+      const users = getMockUsers();
+      const idx = users.findIndex(u => u.uid === userId);
+      if (idx !== -1) {
+        users[idx] = { ...users[idx], ...data };
+        saveMockUsers(users);
+      }
+      if (typeof window !== "undefined") {
+        window.dispatchEvent(new Event("mock-auth-changed"));
+      }
+    }
+  }
+};
+
+export const getAllProjectsForCleanup = async (): Promise<MemoraProject[]> => {
+  if (isFirebaseConfigured && db) {
+    const querySnapshot = await getDocs(collection(db, "projects"));
+    return querySnapshot.docs.map(doc => doc.data() as MemoraProject);
+  } else {
+    if (typeof window !== "undefined") {
+      return getMockProjects();
+    }
+    return [];
   }
 };

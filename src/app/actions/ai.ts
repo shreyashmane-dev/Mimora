@@ -1,25 +1,28 @@
 "use server";
 
+import { Language } from "@/lib/translations";
+
 interface WishResponse {
   intro: string;
   wishes: string;
   quote: string;
 }
 
-// Fallback dynamic database of highly emotional wishes based on relationship
+// Fallback dynamic database of highly emotional wishes based on relationship and language
 const getFallbackWishes = (
   name: string,
   nickname: string,
   age: number,
   relationship: string,
   customMessage: string,
-  length: "standard" | "large" = "standard"
+  length: "standard" | "large" = "standard",
+  language: Language = "en"
 ): WishResponse => {
   const chosenName = nickname || name;
-  const ageStr = age ? `${age} years of` : "a lifetime of";
-  const customContext = customMessage ? `Recall when we talked about: "${customMessage}". ` : "";
   const isLarge = length === "large";
 
+  // Default to English fallback
+  const customContext = customMessage ? `Recall when we talked about: "${customMessage}". ` : "";
   switch (relationship.toLowerCase()) {
     case "partner":
       return {
@@ -74,9 +77,9 @@ const getFallbackWishes = (
   }
 };
 
-// Fallback dynamic captions based on relationship
-const getFallbackCaptions = (relationship: string, count: number): string[] => {
-  const genericCaptions = [
+// Fallback dynamic captions based on relationship, language
+const getFallbackCaptions = (relationship: string, count: number, language: Language = "en"): string[] => {
+  const enGeneric = [
     "A moment frozen in time.",
     "Laughter that echoes forever.",
     "Making memories that never fade.",
@@ -88,57 +91,27 @@ const getFallbackCaptions = (relationship: string, count: number): string[] => {
     "Grateful for every single second.",
     "Looking back, looking forward.",
     "Pure happiness captured.",
-    "Where love resides and memories grow.",
-    "Through the lens of friendship.",
-    "A celebration of you.",
-    "The journey has just begun."
+    "Where love resides and memories grow."
   ];
 
-  const relationshipCaptions: Record<string, string[]> = {
-    partner: [
-      "My favorite view in the world.",
-      "Every moment with you is a treasure.",
-      "The sparkle in my daily life.",
-      "Holding on to your hand, always.",
-      "My favorite adventure partner.",
-      "Laughter is sweeter when shared with you.",
-      "Wrapped up in your love.",
-      "A story of us, page by page.",
-      "My home, my heart, my everything.",
-      "To the moon and back.",
-      "Falling in love with you over and over.",
-      "My favourite memory of us.",
-      "Making every ordinary moment magical.",
-      "Forever is a long time, but I want it with you.",
-      "My sunshine on the cloudiest days."
-    ],
-    best_friend: [
-      "No one else I'd rather act silly with.",
-      "Real friends don't let you do crazy things alone.",
-      "Laughter, inside jokes, and endless chats.",
-      "The therapist I never paid for.",
-      "Partner in crime, always and forever.",
-      "Through thick and thin, we stand together.",
-      "Standard behavior when we meet.",
-      "Making memories we will laugh about at 80.",
-      "My chosen family.",
-      "You know too much, so we must stay friends.",
-      "A rare photo where we both look normal.",
-      "Your vibe attracts your tribe, and I got the best.",
-      "The Watson to my Sherlock.",
-      "Cheers to more late night adventures.",
-      "Best friends since day one."
-    ]
-  };
+  const enPartner = [
+    "My favorite view in the world.",
+    "Every moment with you is a treasure.",
+    "The sparkle in my daily life.",
+    "Holding on to your hand, always.",
+    "My favorite adventure partner.",
+    "Laughter is sweeter when shared with you.",
+    "Wrapped up in your love."
+  ];
 
   const key = relationship.toLowerCase();
-  const pool = relationshipCaptions[key] || genericCaptions;
-  
+  const pool = key === "partner" ? enPartner : enGeneric;
+
   // Return requested amount of captions, cycling if count > pool.length
   return Array.from({ length: count }, (_, i) => pool[i % pool.length]);
 };
 
-// Server Action to Generate Wishes
+// Server Action to Generate Wishes in the preferred language
 export async function generateAIBirthdayWish(
   name: string,
   nickname: string,
@@ -146,7 +119,8 @@ export async function generateAIBirthdayWish(
   relationship: string,
   customMessage: string,
   model: "chatgpt" | "gemini" = "gemini",
-  length: "standard" | "large" = "standard"
+  length: "standard" | "large" = "standard",
+  language: Language = "en"
 ): Promise<WishResponse> {
   const geminiKey = process.env.GEMINI_API_KEY;
   const openAIKey = process.env.OPENAI_API_KEY;
@@ -162,6 +136,8 @@ export async function generateAIBirthdayWish(
     Their age today: ${age || "unspecified"}.
     Their relationship to the sender: ${relationship}.
     Additional memories/messages: "${customMessage || "None"}".
+    
+    The content ("intro", "wishes", and "quote") must be written in elegant English.
     
     Write a highly emotional, cinematic, and premium birthday greeting structured as a JSON object with:
     1. "intro": A short, touching introductory headline (max 10 words).
@@ -257,30 +233,33 @@ export async function generateAIBirthdayWish(
   }
 
   // Final fallback to high quality templated engine
-  return getFallbackWishes(name, nickname, age, relationship, customMessage, length);
+  return getFallbackWishes(name, nickname, age, relationship, customMessage, length, language);
 }
 
-// Server Action to Generate Photo Captions
+// Server Action to Generate Photo Captions in the preferred language
 export async function generateAICaptions(
   relationship: string,
   customMessage: string,
-  photoCount: number
+  photoCount: number,
+  language: Language = "en"
 ): Promise<string[]> {
   const geminiKey = process.env.GEMINI_API_KEY;
   const openAIKey = process.env.OPENAI_API_KEY;
 
+  const prompt = `
+    You are a memory storyteller. Generate exactly ${photoCount} cinematic, emotional captions for a birthday photo gallery.
+    Relationship to sender: ${relationship}.
+    Sender memories: "${customMessage || "None"}".
+    Each caption must be a short, poetic phrase (max 6 words, no hashtags, no emojis, elegant styling).
+    
+    The captions must be written in elegant English.
+    
+    Return a JSON array of strings: ["caption1", "caption2", ...]
+    Do not wrap in markdown.
+  `;
+
   if (geminiKey) {
     try {
-      const prompt = `
-        You are a memory storyteller. Generate exactly ${photoCount} cinematic, emotional captions for a birthday photo gallery.
-        Relationship to sender: ${relationship}.
-        Sender memories: "${customMessage || "None"}".
-        Each caption must be a short, poetic phrase (max 6 words, no hashtags, no emojis, elegant styling).
-        
-        Return a JSON array of strings: ["caption1", "caption2", ...]
-        Do not wrap in markdown.
-      `;
-
       const response = await fetch(
         `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${geminiKey}`,
         {
@@ -308,13 +287,6 @@ export async function generateAICaptions(
 
   if (openAIKey) {
     try {
-      const prompt = `
-        Generate an array of exactly ${photoCount} emotional, poetic, short photo captions (max 6 words each) for a photo gallery.
-        Relationship: ${relationship}.
-        Context: "${customMessage || "None"}".
-        Return JSON format: ["caption 1", "caption 2", ...]
-      `;
-
       const response = await fetch("https://api.openai.com/v1/chat/completions", {
         method: "POST",
         headers: {
@@ -332,7 +304,6 @@ export async function generateAICaptions(
         const data = await response.json();
         const content = data.choices?.[0]?.message?.content || "";
         const parsed = JSON.parse(content.trim());
-        // Handle if response is nested or just an array
         const list = Array.isArray(parsed) ? parsed : (parsed.captions || parsed.list || []);
         if (Array.isArray(list) && list.length > 0) {
           return list.slice(0, photoCount);
@@ -344,10 +315,10 @@ export async function generateAICaptions(
   }
 
   // Fallback
-  return getFallbackCaptions(relationship, photoCount);
+  return getFallbackCaptions(relationship, photoCount, language);
 }
 
-// Server Action for the Floating AI Copilot chat
+// Server Action for the Floating AI Copilot chat in the preferred language
 export async function chatWithAICopilot(
   message: string,
   context: {
@@ -355,7 +326,8 @@ export async function chatWithAICopilot(
     relationship?: string;
     customMessage?: string;
   },
-  model: "chatgpt" | "gemini" = "gemini"
+  model: "chatgpt" | "gemini" = "gemini",
+  language: Language = "en"
 ): Promise<string> {
   const geminiKey = process.env.GEMINI_API_KEY;
   const openAIKey = process.env.OPENAI_API_KEY;
@@ -369,6 +341,8 @@ export async function chatWithAICopilot(
     - Custom Memories Entered: "${context.customMessage || "Not specified"}"
     
     The user is asking/saying: "${message}"
+    
+    CRITICAL: Your response MUST be written in English. Maintain a warm, encouraging, helpful, and creative cinematic storytelling tone.
     
     Provide a direct, inspiring, and highly polished reply (max 120 words). If they ask for suggestions on memories, writing custom messages, captions, or themes, give them concrete, elegant options they can copy/paste directly. Keep the tone emotional, professional, and helpful.
   `;
@@ -416,7 +390,7 @@ export async function chatWithAICopilot(
     }
   }
 
-  // Fallback response generator if no keys
+  // Fallback response generator if no keys are configured
   const lowerMsg = message.toLowerCase();
   const name = context.recipientName || "Alex";
   const rel = context.relationship || "friend";

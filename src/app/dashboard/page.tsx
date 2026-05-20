@@ -4,16 +4,20 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
-import { getProjectsByOwner, deleteProject, MemoraProject, saveProject } from "@/lib/firebase";
+import { getProjectsByOwner, MemoraProject, saveProject } from "@/lib/firebase";
+import { checkAndCleanupExpiredProjects } from "@/app/actions/theme";
+import { deleteProjectWithAssets } from "@/app/actions/project";
 import { 
   Plus, Search, Sparkles, LogOut, Trash2, Edit, ExternalLink, 
   Share2, Calendar, Music, Layout, User as UserIcon, Copy, Check, MessageCircle, X
 } from "lucide-react";
+import { useTranslation } from "@/hooks/useTranslation";
 import { QRCodeSVG } from "qrcode.react";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function DashboardPage() {
   const { user, loading, logout } = useAuth();
+  const { t, currentLang } = useTranslation();
   const router = useRouter();
 
   const [projects, setProjects] = useState<MemoraProject[]>([]);
@@ -44,15 +48,30 @@ export default function DashboardPage() {
     };
 
     fetchProjects();
+
+    // Scan and clean up photos older than 45 days in the background
+    checkAndCleanupExpiredProjects()
+      .then((res) => {
+        if (res.success && res.cleanedCount > 0) {
+          console.log(`Cleaned up ${res.cleanedCount} expired project photos.`);
+          fetchProjects();
+        }
+      })
+      .catch((e) => console.error("Failed to auto-expire photos:", e));
   }, [user, loading, router]);
 
   const handleDelete = async (id: string) => {
-    if (confirm("Are you sure you want to delete this memory experience? This action is irreversible.")) {
+    if (confirm(t("deleteConfirm"))) {
       try {
-        await deleteProject(id);
-        setProjects(projects.filter(p => p.id !== id));
+        const result = await deleteProjectWithAssets(id);
+        if (result.success) {
+          setProjects(projects.filter(p => p.id !== id));
+        } else {
+          alert(`Failed to delete project: ${result.error || "Unknown error"}`);
+        }
       } catch (err) {
         console.error("Failed to delete project:", err);
+        alert("Failed to delete project. Check console logs.");
       }
     }
   };
@@ -109,7 +128,7 @@ export default function DashboardPage() {
       <div className="flex h-screen w-screen items-center justify-center bg-[#030303]">
         <div className="flex flex-col items-center gap-4">
           <div className="h-10 w-10 animate-spin rounded-full border-4 border-purple-500 border-t-transparent"></div>
-          <p className="font-poppins text-sm text-zinc-400">Loading your space...</p>
+          <p className="font-poppins text-sm text-zinc-400">{t("loading")}</p>
         </div>
       </div>
     );
@@ -150,7 +169,7 @@ export default function DashboardPage() {
               className="flex items-center gap-2 text-zinc-400 hover:text-red-400 transition-colors py-1.5 px-3 rounded-lg hover:bg-zinc-900/60 text-sm font-medium cursor-pointer"
             >
               <LogOut size={16} />
-              <span className="hidden sm:inline">Logout</span>
+              <span className="hidden sm:inline">{t("logout")}</span>
             </button>
           </div>
         </header>
@@ -159,10 +178,10 @@ export default function DashboardPage() {
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
           <div>
             <h1 className="text-3xl font-serif text-white tracking-wide">
-              Birthday Projects
+              {t("dashboardTitle")}
             </h1>
             <p className="text-sm text-zinc-400 mt-1 font-light">
-              Craft and manage cinematic storytelling cards for your loved ones.
+              {t("dashboardSubtitle")}
             </p>
           </div>
 
@@ -171,7 +190,7 @@ export default function DashboardPage() {
             className="self-start md:self-auto flex items-center gap-2 py-3 px-5 rounded-xl text-sm font-medium text-white bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 shadow-[0_4px_20px_rgba(168,85,247,0.2)] hover:shadow-[0_4px_25px_rgba(168,85,247,0.35)] transition-all duration-300 transform hover:-translate-y-0.5 cursor-pointer"
           >
             <Plus size={16} />
-            Create Experience
+            {t("createExperienceBtn")}
           </Link>
         </div>
 
@@ -182,7 +201,7 @@ export default function DashboardPage() {
           </span>
           <input
             type="text"
-            placeholder="Search by name or nickname..."
+            placeholder={t("searchPlaceholder")}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full pl-10 pr-4 py-3 rounded-xl text-sm text-white bg-zinc-900/30 border border-zinc-800/80 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all duration-300"
@@ -199,9 +218,9 @@ export default function DashboardPage() {
             <div className="w-12 h-12 rounded-xl bg-purple-500/10 text-purple-400 flex items-center justify-center mx-auto mb-4">
               <Calendar size={24} />
             </div>
-            <h3 className="text-lg font-medium text-white mb-2">No projects found</h3>
+            <h3 className="text-lg font-medium text-white mb-2">{t("noCardsTitle")}</h3>
             <p className="text-sm text-zinc-400 font-light mb-6">
-              {searchQuery ? "No matches for your search query. Try another name." : "Start by creating a beautiful, custom birthday experience."}
+              {searchQuery ? "No matches for your search query. Try another name." : t("noCardsDesc")}
             </p>
             {!searchQuery && (
               <Link
@@ -209,7 +228,7 @@ export default function DashboardPage() {
                 className="inline-flex items-center gap-2 py-2.5 px-4 rounded-xl text-sm font-medium text-white bg-purple-600 hover:bg-purple-500 transition-colors cursor-pointer"
               >
                 <Plus size={16} />
-                Create First Project
+                {t("createExperienceBtn")}
               </Link>
             )}
           </div>
@@ -258,7 +277,7 @@ export default function DashboardPage() {
                             : "bg-zinc-800 text-zinc-400 border-zinc-700/60"
                         }`}
                       >
-                        {project.published ? "Published" : "Draft"}
+                        {project.published ? t("published") : t("drafts")}
                       </button>
                     </div>
 
@@ -283,14 +302,14 @@ export default function DashboardPage() {
                       <Link
                         href={`/project/${project.id}`}
                         className="p-2 rounded-lg bg-zinc-900/80 hover:bg-zinc-800 text-zinc-300 hover:text-white transition-colors"
-                        title="Edit Project"
+                        title={t("editCard")}
                       >
                         <Edit size={15} />
                       </Link>
                       <button
                         onClick={() => handleDelete(project.id)}
                         className="p-2 rounded-lg bg-zinc-900/80 hover:bg-red-950/40 text-zinc-400 hover:text-red-400 transition-colors cursor-pointer"
-                        title="Delete Project"
+                        title={t("deleteCard")}
                       >
                         <Trash2 size={15} />
                       </button>
@@ -303,7 +322,7 @@ export default function DashboardPage() {
                           className="flex items-center gap-1 py-1.5 px-3 rounded-lg bg-purple-950/30 hover:bg-purple-900/40 text-purple-300 border border-purple-900/30 hover:border-purple-800/40 text-xs font-medium transition-all cursor-pointer"
                         >
                           <Share2 size={13} />
-                          Share
+                          "Share"
                         </button>
                       )}
                       
@@ -313,7 +332,7 @@ export default function DashboardPage() {
                         className="flex items-center gap-1 py-1.5 px-3 rounded-lg bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 hover:border-zinc-700 text-xs text-zinc-300 hover:text-white transition-all"
                       >
                         <ExternalLink size={13} />
-                        Preview
+                        "Preview"
                       </Link>
                     </div>
                   </div>
@@ -341,9 +360,11 @@ export default function DashboardPage() {
                 <X size={18} />
               </button>
 
-              <h2 className="text-xl font-medium text-white mb-1">Share Experience</h2>
+              <h2 className="text-xl font-medium text-white mb-1">
+                "Share Experience"
+              </h2>
               <p className="text-xs text-zinc-400 font-light mb-6">
-                Send the cinematic experience to {sharingProject.recipientName}.
+                {t("shareDesc")} {sharingProject.recipientName}.
               </p>
 
               {/* QR Code */}
@@ -354,7 +375,7 @@ export default function DashboardPage() {
               {/* Copy URL */}
               <div className="mb-4">
                 <label className="block text-xxs font-medium text-zinc-500 uppercase tracking-wider mb-1.5">
-                  Public Link
+                  "Public Link"
                 </label>
                 <div className="flex gap-2">
                   <input
@@ -380,7 +401,7 @@ export default function DashboardPage() {
                 className="flex items-center justify-center gap-2 w-full py-3 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 font-medium text-sm text-white transition-colors text-center"
               >
                 <MessageCircle size={16} />
-                Send via WhatsApp
+                {t("sendWhatsApp")}
               </a>
             </motion.div>
           </div>

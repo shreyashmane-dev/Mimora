@@ -6,12 +6,14 @@ import { useAuth } from "@/context/AuthContext";
 import { MemoraProject, saveProject } from "@/lib/firebase";
 import { uploadImage } from "@/lib/upload";
 import { generateAIBirthdayWish, generateAICaptions } from "@/app/actions/ai";
+import { generateCustomThemeCss } from "@/app/actions/theme";
 import { 
   Sparkles, ArrowLeft, ArrowRight, Upload, X, Music, Play, Pause, 
   Layout, Type, Globe, Check, Eye, AlertCircle, RefreshCw, Heart,
   Copy, ExternalLink
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useTranslation } from "@/hooks/useTranslation";
 import AICopilot from "./AICopilot";
 
 // Pre-defined music track URLs
@@ -243,8 +245,165 @@ const TEMPLATES = [
     mockAccent: "text-indigo-600 font-serif italic",
     mockFont: "font-serif",
     mockBtn: "bg-indigo-500 text-white"
+  },
+  {
+    id: "aurora_borealis",
+    name: "Aurora Borealis",
+    theme: "Northern Lights Teal & Pulsing Green Glow",
+    desc: "Vibrant glowing green-teal aurora waves, deep cosmic night, futuristic digital theme.",
+    mockBg: "bg-[#010712]",
+    mockCard: "bg-[#021f1d]/70 border border-emerald-500/30 shadow-[0_0_15px_rgba(16,185,129,0.15)] text-zinc-100",
+    mockText: "text-zinc-200",
+    mockAccent: "bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-400 bg-clip-text text-transparent font-bold font-sans",
+    mockFont: "font-sans",
+    mockBtn: "bg-gradient-to-r from-emerald-500 to-teal-500 text-white"
+  },
+  {
+    id: "rose_gold_glam",
+    name: "Rose Gold Glam",
+    theme: "Luxurious Champagne & Sparkling Rose Gold",
+    desc: "Feminine high-end fashion vibe, warm rose-metallic outlines, romantic glitter highlights.",
+    mockBg: "bg-[#faf0ec] border border-[#e5c2b3]/30",
+    mockCard: "bg-white/90 border border-[#e5c2b3] shadow-md text-[#5c3e35]",
+    mockText: "text-[#6e4e44]",
+    mockAccent: "text-[#b37c6d] font-serif italic font-bold",
+    mockFont: "font-serif",
+    mockBtn: "bg-[#b37c6d] text-white"
+  },
+  {
+    id: "vintage_rose",
+    name: "Vintage Rose",
+    theme: "Dusty Rose & Cream",
+    desc: "Elegant vintage rose aesthetic, warm delicate floral tones, timeless classical look.",
+    mockBg: "bg-[#fcf8f6] border border-[#e8d8d4]/40",
+    mockCard: "bg-[#faf0ec] border border-[#d3bca8] shadow-sm text-[#5a4843]",
+    mockText: "text-[#5a4843]",
+    mockAccent: "text-[#b2796e] font-serif italic font-bold",
+    mockFont: "font-serif",
+    mockBtn: "bg-[#b2796e] text-white"
+  },
+  {
+    id: "midnight_blue",
+    name: "Midnight Blue",
+    theme: "Deep Navy & Silver Stars",
+    desc: "Deep celestial night sky, silver glowing accents, elegant constellations.",
+    mockBg: "bg-gradient-to-tr from-[#030d21] via-[#051636] to-[#010612]",
+    mockCard: "bg-[#0b224d]/60 border border-slate-400/20 shadow-[0_0_15px_rgba(148,163,184,0.15)] text-slate-100",
+    mockText: "text-slate-200",
+    mockAccent: "bg-gradient-to-r from-slate-200 to-indigo-300 bg-clip-text text-transparent font-bold",
+    mockFont: "font-sans",
+    mockBtn: "bg-indigo-600 text-white"
+  },
+  {
+    id: "vibrant_rainbow",
+    name: "Vibrant Rainbow",
+    theme: "Rainbow Spectrum",
+    desc: "Joyful bright spectrum gradients, modern circular blobs, festive pop vibe.",
+    mockBg: "bg-gradient-to-tr from-[#ff3e6c] via-[#ffaa00] to-[#00ff66]",
+    mockCard: "bg-white/95 border border-transparent shadow-lg text-[#1c1c24]",
+    mockText: "text-zinc-800",
+    mockAccent: "bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 bg-clip-text text-transparent font-extrabold",
+    mockFont: "font-sans",
+    mockBtn: "bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 text-white"
+  },
+  {
+    id: "marble_luxury",
+    name: "Marble Luxury",
+    theme: "Black Marble & Gold Veins",
+    desc: "Deep gold veined black marble textures, polished gold buttons, high-end look.",
+    mockBg: "bg-[#0b0c10] border border-[#d4af37]/20",
+    mockCard: "bg-[#1f2022]/90 border border-[#d4af37]/30 shadow-[0_0_15px_rgba(212,175,55,0.15)] text-zinc-100",
+    mockText: "text-zinc-200",
+    mockAccent: "bg-gradient-to-r from-[#ffd700] via-[#fff3b0] to-[#b38600] bg-clip-text text-transparent font-serif font-bold",
+    mockFont: "font-serif",
+    mockBtn: "bg-gradient-to-r from-[#ffd700] to-[#b38600] text-black font-semibold"
+  },
+  {
+    id: "emerald_aurum",
+    name: "Emerald Aurum",
+    theme: "Royal Emerald & Gilded Gold",
+    desc: "Deep royal emerald background, luxury card borders with warm golden shimmer, and elegant serif typography.",
+    mockBg: "bg-[#02180d] border border-[#d4af37]/20",
+    mockCard: "bg-black/50 border border-[#d4af37]/35 shadow-[0_0_15px_rgba(212,175,55,0.2)] text-zinc-100",
+    mockText: "text-zinc-200",
+    mockAccent: "bg-gradient-to-r from-[#ffd700] via-[#ffe34d] to-[#b38600] bg-clip-text text-transparent font-serif font-bold",
+    mockFont: "font-serif",
+    mockBtn: "bg-gradient-to-r from-[#ffd700] to-[#b38600] text-black font-semibold"
+  },
+  {
+    id: "velvet_wine",
+    name: "Velvet Wine",
+    theme: "Deep Wine Red & Warm Champagne",
+    desc: "Deep rich burgundy velvet palette, delicate warm champagne gold accents, and sophisticated classical vibes.",
+    mockBg: "bg-[#1f040d] border border-[#e8d2cb]/20",
+    mockCard: "bg-black/50 border border-[#e8d2cb]/30 shadow-[0_0_15px_rgba(232,210,203,0.15)] text-zinc-100",
+    mockText: "text-zinc-200",
+    mockAccent: "bg-gradient-to-r from-[#f5d9d0] to-[#b87c65] bg-clip-text text-transparent font-serif font-bold",
+    mockFont: "font-serif",
+    mockBtn: "bg-gradient-to-r from-[#e8b2a0] to-[#b87c65] text-white font-semibold"
+  },
+  {
+    id: "cyber_sunset",
+    name: "Cyber Sunset",
+    theme: "Retro Tangerine & Glowing Violet",
+    desc: "Vivid retro-synthwave aesthetic with glowing sunset pink, orange, and neon indigo highlights.",
+    mockBg: "bg-[#0d0315] border border-[#f43f5e]/20",
+    mockCard: "bg-[#0e0317]/90 border border-[#f43f5e]/30 shadow-[0_0_15px_rgba(244,63,94,0.15)] text-zinc-100",
+    mockText: "text-zinc-200",
+    mockAccent: "bg-gradient-to-r from-[#f43f5e] to-[#ffaa00] bg-clip-text text-transparent font-extrabold uppercase",
+    mockFont: "font-sans",
+    mockBtn: "bg-gradient-to-r from-[#f43f5e] to-[#ffaa00] text-white font-semibold"
   }
 ];
+
+const TIMEZONES = [
+  { value: "Asia/Kolkata", label: "India (IST - UTC+5:30)" },
+  { value: "America/New_York", label: "US Eastern (EST/EDT - UTC-5/-4)" },
+  { value: "America/Chicago", label: "US Central (CST/CDT - UTC-6/-5)" },
+  { value: "America/Denver", label: "US Mountain (MST/MDT - UTC-7/-6)" },
+  { value: "America/Los_Angeles", label: "US Pacific (PST/PDT - UTC-8/-7)" },
+  { value: "Europe/London", label: "London (GMT/BST - UTC+0/+1)" },
+  { value: "Europe/Paris", label: "Paris (CET/CEST - UTC+1/+2)" },
+  { value: "Asia/Dubai", label: "Dubai (GST - UTC+4)" },
+  { value: "Asia/Singapore", label: "Singapore (SGT - UTC+8)" },
+  { value: "Asia/Tokyo", label: "Tokyo (JST - UTC+9)" },
+  { value: "Australia/Sydney", label: "Sydney (AEST/AEDT - UTC+10/+11)" },
+  { value: "UTC", label: "Coordinated Universal Time (UTC)" }
+];
+
+const getUTCFromLocalTime = (dateStr: string, timeStr: string, timeZone: string): string => {
+  try {
+    const localDateTimeStr = `${dateStr}T${timeStr}:00`;
+    const date = new Date(localDateTimeStr + 'Z');
+    const parts = new Intl.DateTimeFormat('en-US', {
+      timeZone,
+      year: 'numeric',
+      month: 'numeric',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: 'numeric',
+      second: 'numeric',
+      hour12: false,
+    }).formatToParts(date);
+    
+    const partMap = Object.fromEntries(parts.map(p => [p.type, p.value]));
+    
+    const formattedDate = new Date(Date.UTC(
+      Number(partMap.year),
+      Number(partMap.month) - 1,
+      Number(partMap.day),
+      Number(partMap.hour),
+      Number(partMap.minute),
+      Number(partMap.second)
+    ));
+    
+    const offset = date.getTime() - formattedDate.getTime();
+    return new Date(date.getTime() + offset).toISOString();
+  } catch (e) {
+    console.error("Error converting local time to UTC:", e);
+    return new Date(`${dateStr}T${timeStr}:00`).toISOString();
+  }
+};
 
 interface WizardProps {
   initialProject?: MemoraProject;
@@ -253,6 +412,7 @@ interface WizardProps {
 export default function Wizard({ initialProject }: WizardProps) {
   const { user } = useAuth();
   const router = useRouter();
+  const { t, currentLang } = useTranslation();
 
   // Wizard Step State
   const [currentStep, setCurrentStep] = useState(1);
@@ -299,6 +459,60 @@ export default function Wizard({ initialProject }: WizardProps) {
   const [published, setPublished] = useState(initialProject?.published || false);
   const [creatorPhone, setCreatorPhone] = useState(initialProject?.creatorPhone || "");
   const [slugError, setSlugError] = useState("");
+
+  // Countdown Lock State
+  const [enableLock, setEnableLock] = useState(!!initialProject?.unlockAt);
+  const [unlockDate, setUnlockDate] = useState("");
+  const [unlockTime, setUnlockTime] = useState("00:00");
+  const [timezone, setTimezone] = useState(
+    initialProject?.timezone || 
+    (typeof Intl !== "undefined" ? Intl.DateTimeFormat().resolvedOptions().timeZone : "Asia/Kolkata")
+  );
+  const [timezoneList, setTimezoneList] = useState(TIMEZONES);
+
+  useEffect(() => {
+    if (typeof Intl !== "undefined") {
+      const localTz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+      if (!TIMEZONES.some(tz => tz.value === localTz)) {
+        setTimezoneList(prev => [
+          { value: localTz, label: `Local Browser Timezone (${localTz})` },
+          ...prev
+        ]);
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    if (initialProject?.unlockAt && initialProject?.timezone) {
+      try {
+        const utcDate = new Date(initialProject.unlockAt);
+        const formatter = new Intl.DateTimeFormat("en-US", {
+          timeZone: initialProject.timezone,
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+          hour12: false
+        });
+        const parts = formatter.formatToParts(utcDate);
+        const partMap = Object.fromEntries(parts.map(p => [p.type, p.value]));
+        
+        setUnlockDate(`${partMap.year}-${partMap.month}-${partMap.day}`);
+        setUnlockTime(`${partMap.hour}:${partMap.minute}`);
+      } catch (err) {
+        console.error("Error parsing initial unlock date:", err);
+      }
+    }
+  }, [initialProject]);
+  const [customCss, setCustomCss] = useState(initialProject?.customCss || "");
+  const [showCustomCss, setShowCustomCss] = useState(false);
+  const [isExtractingCss, setIsExtractingCss] = useState(false);
+  const [blendInput, setBlendInput] = useState("");
+  const [blendGlow, setBlendGlow] = useState(false);
+  const [blendGlass, setBlendGlass] = useState(false);
+  const [blendFont, setBlendFont] = useState(false);
 
   // Auto-generate slug when name changes
   useEffect(() => {
@@ -431,13 +645,14 @@ export default function Wizard({ initialProject }: WizardProps) {
         relationship,
         customMessage,
         aiModel,
-        aiLength
+        aiLength,
+        currentLang
       );
       setAiWish(wishes);
 
       // Generate AI captions for images
       if (photos.length > 0) {
-        const generatedCaptions = await generateAICaptions(relationship, customMessage, photos.length);
+        const generatedCaptions = await generateAICaptions(relationship, customMessage, photos.length, currentLang);
         const updatedPhotos = photos.map((p, i) => ({
           ...p,
           caption: generatedCaptions[i] || p.caption
@@ -450,6 +665,35 @@ export default function Wizard({ initialProject }: WizardProps) {
       alert("AI generation failed. Fallback wishes loaded.");
     } finally {
       setIsGeneratingAI(false);
+    }
+  };
+
+  const handleExtractCssWithAI = async () => {
+    if (!blendInput.trim()) {
+      alert("Please paste some custom design code or describe what you want first!");
+      return;
+    }
+
+    setIsExtractingCss(true);
+    try {
+      const modifiers = [];
+      if (blendGlow) modifiers.push("Add vibrant cinematic glow effects to card borders and text");
+      if (blendGlass) modifiers.push("Apply luxurious frosted glassmorphism backdrop filters");
+      if (blendFont) modifiers.push("Set high-end serif header fonts and elegant typography");
+      
+      const fullPrompt = [
+        blendInput,
+        modifiers.length > 0 ? `Enhancements requested: ${modifiers.join(", ")}` : ""
+      ].filter(Boolean).join("\n\n");
+
+      const generatedCss = await generateCustomThemeCss(fullPrompt, templateId, aiModel);
+      setCustomCss(generatedCss);
+      alert("Custom theme CSS successfully blended and applied!");
+    } catch (err) {
+      console.error("AI CSS generation failed:", err);
+      alert("AI failed to extract theme styling. Please write custom CSS manually.");
+    } finally {
+      setIsExtractingCss(false);
     }
   };
 
@@ -471,12 +715,16 @@ export default function Wizard({ initialProject }: WizardProps) {
       alert("Custom Share URL (slug) is required.");
       return;
     }
+    if (enableLock && !unlockDate) {
+      alert("Please select a valid date for the surprise countdown lock.");
+      return;
+    }
 
     setIsSubmitting(true);
     try {
       const projectId = initialProject?.id || `proj-${Math.random().toString(36).substr(2, 9)}`;
       
-      const payload: Omit<MemoraProject, 'createdAt'> & { createdAt?: string } = {
+      const payload: any = {
         id: projectId,
         ownerId: user?.uid || "guest",
         recipientName,
@@ -492,6 +740,10 @@ export default function Wizard({ initialProject }: WizardProps) {
         slug,
         published: isPublishToggle ? !published : published,
         creatorPhone,
+        customCss,
+        unlockAt: enableLock && unlockDate ? getUTCFromLocalTime(unlockDate, unlockTime, timezone) : null,
+        timezone: enableLock ? timezone : null,
+        language: currentLang,
         ...(initialProject?.createdAt ? { createdAt: initialProject.createdAt } : {})
       };
 
@@ -601,28 +853,28 @@ export default function Wizard({ initialProject }: WizardProps) {
                   className="space-y-6"
                 >
                   <div>
-                    <h2 className="text-2xl font-serif text-white tracking-wide">Recipient Details</h2>
-                    <p className="text-xs text-zinc-400 mt-1 font-light">Who is this beautiful memory experience for?</p>
+                    <h2 className="text-2xl font-serif text-white tracking-wide">{t("recipientDetails")}</h2>
+                    <p className="text-xs text-zinc-400 mt-1 font-light">{t("recipientDetailsDesc")}</p>
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                     <div>
-                      <label className="block text-xxs font-medium text-zinc-400 tracking-wider uppercase mb-2">Recipient Name *</label>
+                      <label className="block text-xxs font-medium text-zinc-400 tracking-wider uppercase mb-2">{t("recipientName")} *</label>
                       <input
                         type="text"
                         value={recipientName}
                         onChange={(e) => setRecipientName(e.target.value)}
-                        placeholder="Aarav Sharma"
+                        placeholder={t("recipientNamePlaceholder")}
                         className="w-full bg-zinc-950/60 border border-zinc-850 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all duration-300"
                       />
                     </div>
                     <div>
-                      <label className="block text-xxs font-medium text-zinc-400 tracking-wider uppercase mb-2">Nickname (Optional)</label>
+                      <label className="block text-xxs font-medium text-zinc-400 tracking-wider uppercase mb-2">{t("nickname")} (Optional)</label>
                       <input
                         type="text"
                         value={nickname}
                         onChange={(e) => setNickname(e.target.value)}
-                        placeholder="Golu"
+                        placeholder={t("nicknamePlaceholder")}
                         className="w-full bg-zinc-950/60 border border-zinc-850 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all duration-300"
                       />
                     </div>
@@ -630,7 +882,7 @@ export default function Wizard({ initialProject }: WizardProps) {
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                     <div>
-                      <label className="block text-xxs font-medium text-zinc-400 tracking-wider uppercase mb-2">Age This Birthday</label>
+                      <label className="block text-xxs font-medium text-zinc-400 tracking-wider uppercase mb-2">{t("ageLabel")}</label>
                       <input
                         type="number"
                         value={age}
@@ -641,44 +893,44 @@ export default function Wizard({ initialProject }: WizardProps) {
                       />
                     </div>
                     <div>
-                      <label className="block text-xxs font-medium text-zinc-400 tracking-wider uppercase mb-2">Relationship</label>
+                      <label className="block text-xxs font-medium text-zinc-400 tracking-wider uppercase mb-2">{t("relationshipLabel")}</label>
                       <select
                         value={relationship}
                         onChange={(e) => setRelationship(e.target.value)}
                         className="w-full bg-zinc-950/60 border border-zinc-850 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all duration-300 cursor-pointer"
                       >
-                        <option value="partner">Partner / Lover</option>
-                        <option value="best_friend">Best Friend</option>
-                        <option value="sibling">Sibling</option>
-                        <option value="parent">Parent</option>
-                        <option value="friend">Friend</option>
-                        <option value="child">Child</option>
-                        <option value="other">Other / Classic</option>
+                        <option value="partner">{t("relationshipPartner")}</option>
+                        <option value="best_friend">{t("relationshipFriend")}</option>
+                        <option value="sibling">{t("relationshipSibling")}</option>
+                        <option value="parent">{t("relationshipParent")}</option>
+                        <option value="friend">{t("relationshipFriendLabel")}</option>
+                        <option value="child">{t("relationshipChild")}</option>
+                        <option value="other">{t("relationshipOther")}</option>
                       </select>
                     </div>
                   </div>
 
                   <div className="grid grid-cols-1 gap-5">
                     <div>
-                      <label className="block text-xxs font-medium text-zinc-400 tracking-wider uppercase mb-2">Your WhatsApp/Mobile Number (Optional)</label>
+                      <label className="block text-xxs font-medium text-zinc-400 tracking-wider uppercase mb-2">{t("creatorPhoneLabel")}</label>
                       <input
                         type="tel"
                         value={creatorPhone}
                         onChange={(e) => setCreatorPhone(e.target.value)}
-                        placeholder="e.g. +919876543210 (include country code)"
+                        placeholder={t("whatsappNumPlaceholder")}
                         className="w-full bg-zinc-950/60 border border-zinc-850 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all duration-300"
                       />
-                      <p className="text-[10px] text-zinc-500 mt-1 font-light">Enables a quick WhatsApp reply button on the recipient's final card so they can instantly send love back.</p>
+                      <p className="text-[10px] text-zinc-500 mt-1 font-light">{t("creatorPhoneDesc")}</p>
                     </div>
                   </div>
 
                   <div>
-                    <label className="block text-xxs font-medium text-zinc-400 tracking-wider uppercase mb-2">Custom Memories / Insights</label>
+                    <label className="block text-xxs font-medium text-zinc-400 tracking-wider uppercase mb-2">{t("memoriesStory")}</label>
                     <textarea
                       rows={4}
                       value={customMessage}
                       onChange={(e) => setCustomMessage(e.target.value)}
-                      placeholder="Share elements of your relationship, inside jokes, memorable dates or experiences that you want the AI to incorporate into the cinematic wishes..."
+                      placeholder={t("memoriesPlaceholder")}
                       className="w-full bg-zinc-950/60 border border-zinc-850 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all duration-300 resize-none"
                     />
                   </div>
@@ -697,8 +949,8 @@ export default function Wizard({ initialProject }: WizardProps) {
                   <div>
                     <div className="flex justify-between items-end">
                       <div>
-                        <h2 className="text-2xl font-serif text-white tracking-wide">Memory Gallery</h2>
-                        <p className="text-xs text-zinc-400 mt-1 font-light">Upload up to 15 photos of shared experiences.</p>
+                        <h2 className="text-2xl font-serif text-white tracking-wide">{t("imageUploadTitle")}</h2>
+                        <p className="text-xs text-zinc-400 mt-1 font-light">{t("imageUploadDesc")}</p>
                       </div>
                       <span className="text-xs font-mono text-purple-400">{photos.length}/15 uploaded</span>
                     </div>
@@ -728,7 +980,7 @@ export default function Wizard({ initialProject }: WizardProps) {
                       {isUploading ? "Uploading & Compressing..." : "Drag & Drop or Click to Upload"}
                     </p>
                     <p className="text-xs text-zinc-500 font-light">
-                      Supports JPG, PNG (automatically compressed for rapid load times)
+                      "Supports JPG, PNG (automatically compressed for rapid load times)"
                     </p>
                   </div>
 
@@ -758,7 +1010,7 @@ export default function Wizard({ initialProject }: WizardProps) {
                               type="text"
                               value={photo.caption}
                               onChange={(e) => updatePhotoCaption(index, e.target.value)}
-                              placeholder="Write a custom caption..."
+                              placeholder={t("photoCaptionLabel")}
                               className="w-full bg-zinc-950/60 border border-zinc-850/60 rounded-lg px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-purple-500"
                             />
                           </div>
@@ -779,8 +1031,8 @@ export default function Wizard({ initialProject }: WizardProps) {
                   className="space-y-6"
                 >
                   <div>
-                    <h2 className="text-2xl font-serif text-white tracking-wide">Choose Cinematic Theme</h2>
-                    <p className="text-xs text-zinc-400 mt-1 font-light">Select the design personality for this microsite.</p>
+                    <h2 className="text-2xl font-serif text-white tracking-wide">{t("chooseTheme")}</h2>
+                    <p className="text-xs text-zinc-400 mt-1 font-light">{t("chooseThemeDesc")}</p>
                   </div>
 
                   <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
@@ -810,7 +1062,7 @@ export default function Wizard({ initialProject }: WizardProps) {
                           </div>
                           <div className="mt-4 pt-3 border-t border-zinc-900/60 flex items-center gap-1.5 text-[10px] font-medium text-purple-400">
                             <Eye size={12} />
-                            Click to select design
+                            "Click to select design"
                           </div>
                         </div>
                       ))}
@@ -862,19 +1114,31 @@ export default function Wizard({ initialProject }: WizardProps) {
                                 >
                                   <Heart size={10} className="text-red-400" />
                                 </motion.div>
-                                <h4 className={`text-xs leading-snug font-serif ${selectedTpl.mockText}`}>
-                                  Happy {age}th Birthday,<br />
-                                  <span className={selectedTpl.mockAccent}>{recipientName || "Alex"}</span>!
+                                <h4 className={`text-xs leading-snug font-serif ${selectedTpl.mockText} px-1`}>
+                                  {(() => {
+                                    const rawText = t("happyBirthdayText").replace("{age}", String(age));
+                                    const parts = rawText.split("{name}");
+                                    if (parts.length > 1) {
+                                      return (
+                                        <>
+                                          {parts[0]}
+                                          <span className={selectedTpl.mockAccent}>{recipientName || "Alex"}</span>
+                                          {parts[1]}
+                                        </>
+                                      );
+                                    }
+                                    return rawText;
+                                  })()}
                                 </h4>
                                 <p className="text-[7px] text-zinc-400 font-light max-w-[130px] mx-auto leading-normal">
-                                  "A cinematic memory capsule created just for you."
+                                  "{t("somethingBeautifulAwaits")}"
                                 </p>
                               </div>
 
                               {/* Button */}
                               <div className="w-full pb-2 z-10">
                                 <span className={`py-1.5 px-3.5 rounded-full text-[8px] font-medium transition-all ${selectedTpl.mockBtn} inline-block shadow-sm`}>
-                                  Unveil Memories
+                                  {t("unveilMemories")}
                                 </span>
                               </div>
 
@@ -883,6 +1147,120 @@ export default function Wizard({ initialProject }: WizardProps) {
                         })()}
                       </div>
                     </div>
+                  </div>
+
+                  {/* Collapsible Advanced Custom Theme Code Injection */}
+                  <div className="mt-8 border-t border-zinc-900/60 pt-6">
+                    <button
+                      type="button"
+                      onClick={() => setShowCustomCss(!showCustomCss)}
+                      className="flex items-center gap-2 text-xs font-semibold text-zinc-400 hover:text-white transition-colors cursor-pointer"
+                    >
+                      <Sparkles size={14} className="text-purple-400 animate-pulse" />
+                      {showCustomCss ? "Hide Custom CSS Theme Customizer" : t("customCssTitle")}
+                    </button>
+
+                    {showCustomCss && (
+                      <div className="mt-4 p-5 rounded-2xl bg-zinc-900/20 border border-zinc-850/80 space-y-6">
+                        {/* Editor Section */}
+                        <div className="space-y-2">
+                          <label className="block text-[10px] font-semibold text-zinc-400 tracking-wider uppercase mb-1">"Active Custom CSS overrides"</label>
+                          <textarea
+                            rows={6}
+                            value={customCss}
+                            onChange={(e) => setCustomCss(e.target.value)}
+                            placeholder="/* Paste custom CSS here to override the design */&#10;.glass-panel { background: rgba(10, 5, 20, 0.8) !important; }&#10;h1 { color: #ff3e6c !important; }"
+                            className="w-full bg-zinc-950/60 border border-zinc-850 rounded-xl px-4 py-3 text-xs text-white font-mono focus:outline-none focus:border-purple-500 resize-y"
+                          />
+                          <p className="text-[10px] text-zinc-500 font-light">"This CSS will inject directly to override base elements (.glass-panel, h1, text colors) in the card."</p>
+                        </div>
+
+                        {/* AI Design Blender Widget */}
+                        <div className="p-5 bg-gradient-to-br from-purple-950/20 to-zinc-950/40 border border-purple-900/20 rounded-2xl space-y-4 shadow-inner">
+                          <div>
+                            <div className="flex items-center gap-1.5">
+                              <Sparkles size={14} className="text-purple-400 animate-pulse" />
+                              <h4 className="text-xs font-semibold text-white">{t("aiBlenderTitle")}</h4>
+                            </div>
+                            <p className="text-[10px] text-zinc-400 font-light mt-0.5">
+                              {t("aiBlenderDesc")}
+                            </p>
+                          </div>
+
+                          <textarea
+                            rows={3}
+                            value={blendInput}
+                            onChange={(e) => setBlendInput(e.target.value)}
+                            placeholder={t("aiBlenderPlaceholder")}
+                            className="w-full bg-zinc-900/60 border border-zinc-800 rounded-xl px-4 py-2.5 text-xs text-white font-light focus:outline-none focus:border-purple-500"
+                          />
+
+                          {/* Quick Enhance Vibe Toggles */}
+                          <div className="space-y-2">
+                            <label className="block text-[9px] font-medium text-zinc-500 tracking-wider uppercase">"Quick Vibe Enhancements"</label>
+                            <div className="flex flex-wrap gap-2">
+                              <button
+                                type="button"
+                                onClick={() => setBlendGlow(!blendGlow)}
+                                className={`px-3 py-1.5 rounded-full text-xxs font-medium border transition-all cursor-pointer ${
+                                  blendGlow 
+                                    ? "bg-purple-900/30 border-purple-500 text-purple-200" 
+                                    : "bg-zinc-950/40 border-zinc-800 text-zinc-400 hover:border-zinc-700"
+                                }`}
+                              >
+                                {t("vibeGlow")}
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => setBlendGlass(!blendGlass)}
+                                className={`px-3 py-1.5 rounded-full text-xxs font-medium border transition-all cursor-pointer ${
+                                  blendGlass 
+                                    ? "bg-purple-900/30 border-purple-500 text-purple-200" 
+                                    : "bg-zinc-950/40 border-zinc-800 text-zinc-400 hover:border-zinc-700"
+                                }`}
+                              >
+                                {t("vibeGlass")}
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => setBlendFont(!blendFont)}
+                                className={`px-3 py-1.5 rounded-full text-xxs font-medium border transition-all cursor-pointer ${
+                                  blendFont 
+                                    ? "bg-purple-900/30 border-purple-500 text-purple-200" 
+                                    : "bg-zinc-950/40 border-zinc-800 text-zinc-400 hover:border-zinc-700"
+                                }`}
+                              >
+                                {t("vibeTypography")}
+                              </button>
+                            </div>
+                          </div>
+
+                          <div className="flex items-center justify-between pt-2 border-t border-zinc-900/60">
+                            <div className="text-[10px] text-zinc-500">
+                              Base: <span className="font-semibold text-purple-400">{templateId.replace(/_/g, " ")}</span>
+                            </div>
+                            <button
+                              type="button"
+                              onClick={handleExtractCssWithAI}
+                              disabled={isExtractingCss || !blendInput.trim()}
+                              className="flex items-center gap-1.5 py-2 px-4 rounded-xl text-xxs font-semibold bg-purple-650 hover:bg-purple-600 disabled:opacity-30 disabled:hover:bg-purple-650 text-white transition-all cursor-pointer"
+                            >
+                              {isExtractingCss ? (
+                                <>
+                                  <svg className="animate-spin h-3.5 w-3.5 text-white" fill="none" viewBox="0 0 24 24">
+                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                                  </svg>
+                                  {t("blending")}
+                                </>
+                              ) : (
+                                t("blendBtn")
+                              )}
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </motion.div>
               )}
@@ -897,9 +1275,9 @@ export default function Wizard({ initialProject }: WizardProps) {
                   className="space-y-6"
                 >
                   <div>
-                    <h2 className="text-2xl font-serif text-white tracking-wide">Background Music</h2>
+                    <h2 className="text-2xl font-serif text-white tracking-wide">{t("musicTrack")}</h2>
                     <p className="text-xs text-zinc-400 mt-1 font-light">
-                      Choose an instrumental track that triggers after interaction.
+                      {t("musicTrackDesc")}
                     </p>
                   </div>
 
@@ -954,8 +1332,8 @@ export default function Wizard({ initialProject }: WizardProps) {
                 >
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <div>
-                      <h2 className="text-2xl font-serif text-white tracking-wide">AI Wishes Generator</h2>
-                      <p className="text-xs text-zinc-400 mt-1 font-light">Craft personalized, highly emotional birthday wishes using AI.</p>
+                      <h2 className="text-2xl font-serif text-white tracking-wide">{t("aiGenerateTitle")}</h2>
+                      <p className="text-xs text-zinc-400 mt-1 font-light">{t("aiGenerateDesc")}</p>
                     </div>
 
                     <button
@@ -967,12 +1345,12 @@ export default function Wizard({ initialProject }: WizardProps) {
                       {isGeneratingAI ? (
                         <>
                           <RefreshCw size={14} className="animate-spin" />
-                          Generating...
+                          {t("generatingWishes")}
                         </>
                       ) : (
                         <>
                           <Sparkles size={14} />
-                          Generate / Re-Generate
+                          {t("generateWishes")}
                         </>
                       )}
                     </button>
@@ -981,7 +1359,7 @@ export default function Wizard({ initialProject }: WizardProps) {
                   {/* Engine & Length Selectors */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 rounded-2xl bg-zinc-900/30 border border-zinc-850">
                     <div>
-                      <label className="block text-xxs font-medium text-zinc-400 tracking-wider uppercase mb-1.5">AI Engine Mode</label>
+                      <label className="block text-xxs font-medium text-zinc-400 tracking-wider uppercase mb-1.5">{t("aiModelChoice")}</label>
                       <div className="flex bg-zinc-950 p-0.5 rounded-xl border border-zinc-900">
                         <button
                           type="button"
@@ -1009,7 +1387,7 @@ export default function Wizard({ initialProject }: WizardProps) {
                     </div>
 
                     <div>
-                      <label className="block text-xxs font-medium text-zinc-400 tracking-wider uppercase mb-1.5">Wishes Length</label>
+                      <label className="block text-xxs font-medium text-zinc-400 tracking-wider uppercase mb-1.5">{t("aiWishLength")}</label>
                       <div className="flex bg-zinc-950 p-0.5 rounded-xl border border-zinc-900">
                         <button
                           type="button"
@@ -1020,7 +1398,7 @@ export default function Wizard({ initialProject }: WizardProps) {
                               : "text-zinc-500 hover:text-zinc-300"
                           }`}
                         >
-                          Standard
+                          "Standard"
                         </button>
                         <button
                           type="button"
@@ -1031,7 +1409,7 @@ export default function Wizard({ initialProject }: WizardProps) {
                               : "text-zinc-500 hover:text-zinc-300"
                           }`}
                         >
-                          Large / Detailed
+                          "Detailed / Long"
                         </button>
                       </div>
                     </div>
@@ -1046,7 +1424,7 @@ export default function Wizard({ initialProject }: WizardProps) {
                   ) : (
                     <div className="space-y-4">
                       <div>
-                        <label className="block text-xxs font-medium text-zinc-400 tracking-wider uppercase mb-1.5">Cinematic Intro Headline</label>
+                        <label className="block text-xxs font-medium text-zinc-400 tracking-wider uppercase mb-1.5">{t("aiWishIntroLabel")}</label>
                         <input
                           type="text"
                           value={aiWish.intro}
@@ -1057,7 +1435,7 @@ export default function Wizard({ initialProject }: WizardProps) {
                       </div>
 
                       <div>
-                        <label className="block text-xxs font-medium text-zinc-400 tracking-wider uppercase mb-1.5">Deep Birthday Wishes</label>
+                        <label className="block text-xxs font-medium text-zinc-400 tracking-wider uppercase mb-1.5">{t("aiWishBodyLabel")}</label>
                         <textarea
                           rows={4}
                           value={aiWish.wishes}
@@ -1068,7 +1446,7 @@ export default function Wizard({ initialProject }: WizardProps) {
                       </div>
 
                       <div>
-                        <label className="block text-xxs font-medium text-zinc-400 tracking-wider uppercase mb-1.5">Closing Inspiring Quote</label>
+                        <label className="block text-xxs font-medium text-zinc-400 tracking-wider uppercase mb-1.5">{t("aiWishQuoteLabel")}</label>
                         <input
                           type="text"
                           value={aiWish.quote}
@@ -1092,13 +1470,13 @@ export default function Wizard({ initialProject }: WizardProps) {
                   className="space-y-6"
                 >
                   <div>
-                    <h2 className="text-2xl font-serif text-white tracking-wide">Publish & Share</h2>
-                    <p className="text-xs text-zinc-400 mt-1 font-light">Set up the public path for this microsite experience.</p>
+                    <h2 className="text-2xl font-serif text-white tracking-wide">{t("publishTitle")}</h2>
+                    <p className="text-xs text-zinc-400 mt-1 font-light">{t("publishDesc")}</p>
                   </div>
 
                   <div className="space-y-4">
                     <div>
-                      <label className="block text-xxs font-medium text-zinc-400 tracking-wider uppercase mb-2">Custom Slug (Public URL)</label>
+                      <label className="block text-xxs font-medium text-zinc-400 tracking-wider uppercase mb-2">{t("customUrl")}</label>
                       <div className="flex rounded-xl overflow-hidden bg-zinc-950/60 border border-zinc-850 focus-within:border-purple-500 transition-colors">
                         <span className="bg-zinc-900 border-r border-zinc-850 px-3.5 py-3 text-xs text-zinc-500 select-none">
                           memora.app/preview/
@@ -1115,13 +1493,85 @@ export default function Wizard({ initialProject }: WizardProps) {
                         />
                       </div>
                       <p className="text-[10px] text-zinc-500 mt-1.5 leading-relaxed font-light">
-                        Only lowercase letters, numbers, and hyphens. Ensure this is unique.
+                        "Only lowercase letters, numbers, and hyphens. Ensure this is unique."
                       </p>
+                    </div>
+
+                    {/* Surprise Countdown Lock Settings */}
+                    <div className="mt-4 p-5 rounded-2xl bg-zinc-950/40 border border-zinc-850 space-y-4">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <label className="flex items-center gap-2 text-xs font-semibold text-white cursor-pointer select-none">
+                            <span>{t("surpriseLock")}</span>
+                          </label>
+                          <p className="text-[10px] text-zinc-400 font-light mt-0.5">
+                            {t("surpriseLockDesc")}
+                          </p>
+                        </div>
+                        <label className="relative inline-flex items-center cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={enableLock}
+                            onChange={(e) => setEnableLock(e.target.checked)}
+                            className="sr-only peer"
+                          />
+                          <div className="w-9 h-5 bg-zinc-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-zinc-400 after:border-zinc-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-purple-600 peer-checked:after:bg-white peer-checked:after:border-purple-600"></div>
+                        </label>
+                      </div>
+
+                      {enableLock && (
+                        <motion.div
+                          initial={{ opacity: 0, height: 0 }}
+                          animate={{ opacity: 1, height: "auto" }}
+                          exit={{ opacity: 0, height: 0 }}
+                          transition={{ duration: 0.3 }}
+                          className="pt-3 border-t border-zinc-905 grid grid-cols-1 md:grid-cols-2 gap-4 overflow-hidden"
+                        >
+                          <div>
+                            <label className="block text-[9px] font-semibold text-zinc-400 tracking-wider uppercase mb-1.5">{t("unlockDateLabel")} *</label>
+                            <input
+                              type="date"
+                              value={unlockDate}
+                              onChange={(e) => setUnlockDate(e.target.value)}
+                              className="w-full bg-zinc-950/60 border border-zinc-850 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all duration-300"
+                              required
+                            />
+                          </div>
+
+                          <div>
+                            <label className="block text-[9px] font-semibold text-zinc-400 tracking-wider uppercase mb-1.5">{t("unlockTimeLabel")} *</label>
+                            <input
+                              type="time"
+                              value={unlockTime}
+                              onChange={(e) => setUnlockTime(e.target.value)}
+                              className="w-full bg-zinc-950/60 border border-zinc-850 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all duration-300"
+                              required
+                            />
+                          </div>
+
+                          <div className="md:col-span-2">
+                            <label className="block text-[9px] font-semibold text-zinc-400 tracking-wider uppercase mb-1.5">{t("timezoneLabel")}</label>
+                            <select
+                              value={timezone}
+                              onChange={(e) => setTimezone(e.target.value)}
+                              className="w-full bg-zinc-950/60 border border-zinc-850 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all duration-300 cursor-pointer"
+                            >
+                              {timezoneList.map((tz) => (
+                                <option key={tz.value} value={tz.value} className="bg-zinc-950 text-white">
+                                  {tz.label}
+                                </option>
+                              ))}
+                            </select>
+                          </div>
+                        </motion.div>
+                      )}
                     </div>
 
                     {/* Live Link Preview & Copy */}
                     <div className="mt-4 p-4 rounded-2xl bg-purple-950/10 border border-purple-900/25">
-                      <label className="block text-[10px] font-semibold text-purple-400 tracking-wider uppercase mb-2">Your Shareable Link</label>
+                      <label className="block text-[10px] font-semibold text-purple-400 tracking-wider uppercase mb-2">
+                        "Your Shareable Link"
+                      </label>
                       <div className="flex gap-2">
                         <input
                           type="text"
@@ -1134,7 +1584,7 @@ export default function Wizard({ initialProject }: WizardProps) {
                           onClick={() => {
                             const url = typeof window !== "undefined" ? `${window.location.origin}/preview/${slug}` : `https://memora.app/preview/${slug}`;
                             navigator.clipboard.writeText(url);
-                            alert("Link copied to clipboard!");
+                            alert(t("linkCopied") || "Link copied to clipboard!");
                           }}
                           className="flex items-center justify-center p-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white transition-colors cursor-pointer"
                           title="Copy Link"
@@ -1156,9 +1606,11 @@ export default function Wizard({ initialProject }: WizardProps) {
                     <div className="p-4 rounded-2xl bg-zinc-900/20 border border-zinc-850/80 flex items-start gap-3">
                       <AlertCircle size={16} className="text-purple-400 flex-shrink-0 mt-0.5" />
                       <div>
-                        <h4 className="text-xs font-semibold text-white mb-0.5">Privacy Notice</h4>
+                        <h4 className="text-xs font-semibold text-white mb-0.5">
+                          "Privacy Notice"
+                        </h4>
                         <p className="text-[11px] text-zinc-400 font-light leading-relaxed">
-                          Your project must be "Published" for the recipient to view it. You can toggle this status at any time from the dashboard.
+                          "Your project must be \"Published\" for the recipient to view it. You can toggle this status at any time from the dashboard."
                         </p>
                       </div>
                     </div>
@@ -1177,7 +1629,7 @@ export default function Wizard({ initialProject }: WizardProps) {
                 className="flex items-center gap-1.5 py-2.5 px-4 rounded-xl text-xs font-medium text-zinc-400 hover:text-white transition-colors cursor-pointer"
               >
                 <ArrowLeft size={14} />
-                Back
+                {t("backStep")}
               </button>
             ) : (
               <div />
@@ -1190,7 +1642,7 @@ export default function Wizard({ initialProject }: WizardProps) {
                 onClick={() => handleSave(false)}
                 className="py-2.5 px-4 rounded-xl text-xs font-medium text-zinc-300 hover:text-white bg-zinc-900/60 hover:bg-zinc-900 border border-zinc-800 transition-colors cursor-pointer"
               >
-                {isSubmitting ? "Saving..." : "Save Draft"}
+                {isSubmitting ? t("saving") : t("saveDraft")}
               </button>
 
               {currentStep < 6 ? (
@@ -1199,7 +1651,7 @@ export default function Wizard({ initialProject }: WizardProps) {
                   onClick={nextStep}
                   className="flex items-center gap-1.5 py-2.5 px-5 rounded-xl text-xs font-semibold text-white bg-purple-600 hover:bg-purple-500 shadow-[0_0_15px_rgba(168,85,247,0.25)] transition-all cursor-pointer"
                 >
-                  Continue
+                  {t("continueBtn")}
                   <ArrowRight size={14} />
                 </button>
               ) : (
@@ -1207,11 +1659,15 @@ export default function Wizard({ initialProject }: WizardProps) {
                   type="button"
                   disabled={isSubmitting}
                   onClick={async () => {
+                    if (enableLock && !unlockDate) {
+                      alert("Please select a valid date for the surprise countdown lock.");
+                      return;
+                    }
                     // Set published to true first, then save
                     setIsSubmitting(true);
                     try {
                       const projectId = initialProject?.id || `proj-${Math.random().toString(36).substr(2, 9)}`;
-                      const payload: Omit<MemoraProject, 'createdAt'> & { createdAt?: string } = {
+                      const payload: any = {
                         id: projectId,
                         ownerId: user?.uid || "guest",
                         recipientName,
@@ -1226,6 +1682,11 @@ export default function Wizard({ initialProject }: WizardProps) {
                         music,
                         slug,
                         published: true,
+                        creatorPhone,
+                        customCss,
+                        unlockAt: enableLock && unlockDate ? getUTCFromLocalTime(unlockDate, unlockTime, timezone) : null,
+                        timezone: enableLock ? timezone : null,
+                        language: currentLang,
                         ...(initialProject?.createdAt ? { createdAt: initialProject.createdAt } : {})
                       };
                       await saveProject(payload);
@@ -1240,7 +1701,7 @@ export default function Wizard({ initialProject }: WizardProps) {
                   className="flex items-center gap-1.5 py-2.5 px-5 rounded-xl text-xs font-semibold text-white bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 shadow-[0_4px_20px_rgba(168,85,247,0.3)] transition-all cursor-pointer"
                 >
                   <Check size={14} />
-                  Publish & Finish
+                  {t("finishPublish")}
                 </button>
               )}
             </div>
@@ -1258,3 +1719,4 @@ export default function Wizard({ initialProject }: WizardProps) {
     </div>
   );
 }
+

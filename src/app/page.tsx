@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
+import { useTranslation } from "@/hooks/useTranslation";
 import { 
   Sparkles, Calendar, Heart, Shield, ArrowRight, Play, Layout, 
   MessageSquare, Share2, UploadCloud, Smile, Check, Smartphone, Volume2
@@ -19,7 +20,28 @@ const TEMPLATE_PREVIEWS = [
 
 export default function LandingPage() {
   const { user } = useAuth();
+  const { t } = useTranslation();
   const [activePreview, setActivePreview] = useState(0);
+
+  const renderHeroTitle = () => {
+    const text = t("landingTitle");
+    if (text.includes("unforgettable")) {
+      const parts = text.split("unforgettable");
+      return (
+        <>
+          {parts[0]}<span className="text-gradient">unforgettable</span>{parts[1]}
+        </>
+      );
+    } else if (text.includes("अविस्मरणीय")) {
+      const parts = text.split("अविस्मरणीय");
+      return (
+        <>
+          {parts[0]}<span className="text-gradient">अविस्मरणीय</span>{parts[1]}
+        </>
+      );
+    }
+    return <span className="text-gradient">{text}</span>;
+  };
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -60,18 +82,18 @@ export default function LandingPage() {
               href="/dashboard"
               className="py-2 px-4 rounded-xl text-xs font-semibold text-white bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 transition-colors"
             >
-              Dashboard
+              {t("dashboard")}
             </Link>
           ) : (
             <>
               <Link href="/login" className="text-xs text-zinc-400 hover:text-white transition-colors py-2 px-3">
-                Login
+                {t("loginBtn")}
               </Link>
               <Link
                 href="/signup"
                 className="py-2 px-4 rounded-xl text-xs font-semibold text-white bg-purple-600 hover:bg-purple-500 shadow-[0_0_15px_rgba(168,85,247,0.25)] transition-all"
               >
-                Sign Up
+                {t("signupBtn")}
               </Link>
             </>
           )}
@@ -92,11 +114,11 @@ export default function LandingPage() {
           </div>
           
           <h1 className="text-4xl sm:text-6xl font-serif text-white tracking-wide leading-tight">
-            Turn memories into <span className="text-gradient">unforgettable</span> birthday experiences.
+            {renderHeroTitle()}
           </h1>
           
           <p className="text-sm sm:text-md text-zinc-400 font-light leading-relaxed max-w-xl">
-            Forget paper cards. Memora curates emotional, cinematic memory timelines featuring personalized AI wishes, photo archives, and custom music soundtracks in a premium shareable website.
+            {t("landingSubtitle")}
           </p>
 
           <div className="flex flex-wrap items-center gap-4 pt-4">
@@ -104,7 +126,7 @@ export default function LandingPage() {
               href={user ? "/dashboard" : "/signup"}
               className="flex items-center gap-2 py-4 px-6 rounded-full font-semibold text-sm text-white bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 shadow-[0_4px_20px_rgba(168,85,247,0.3)] transition-transform hover:scale-105 cursor-pointer"
             >
-              Create Experience
+              {t("createExperienceBtn")}
               <ArrowRight size={16} />
             </Link>
             <a
@@ -112,7 +134,7 @@ export default function LandingPage() {
               className="flex items-center gap-2 py-4 px-6 rounded-full font-semibold text-sm text-zinc-300 hover:text-white bg-zinc-900 border border-zinc-800 transition-colors cursor-pointer"
             >
               <Play size={14} />
-              Interactive Demo
+              {t("interactiveDemoBtn")}
             </a>
           </div>
         </motion.div>
@@ -171,9 +193,9 @@ export default function LandingPage() {
       {/* HOW IT WORKS SECTION */}
       <section id="demo" className="max-w-7xl mx-auto px-6 py-24 border-t border-zinc-950">
         <div className="text-center max-w-2xl mx-auto mb-16">
-          <span className="text-[10px] tracking-widest font-mono text-purple-400 uppercase block mb-3">HOW IT WORKS</span>
+          <span className="text-[10px] tracking-widest font-mono text-purple-400 uppercase block mb-3">{t("howItWorksTitle")}</span>
           <h2 className="text-3xl md:text-4xl font-serif text-white tracking-wide leading-tight">
-            Crafting memories in three steps.
+            {t("howItWorksSubtitle")}
           </h2>
         </div>
 
@@ -185,9 +207,9 @@ export default function LandingPage() {
           className="grid grid-cols-1 md:grid-cols-3 gap-8"
         >
           {[
-            { step: "01", icon: <Smile className="text-purple-400" size={24} />, title: "Describe the Vibe", desc: "Input recipient relationship, age, and share personal memories or jokes. Our AI uses this to craft bespoke content." },
-            { step: "02", icon: <UploadCloud className="text-purple-400" size={24} />, title: "Drop Your Memories", desc: "Upload up to 15 photos. Images are compressed automatically to ensure rapid, fluid viewport page loading on mobile." },
-            { step: "03", icon: <Layout className="text-purple-400" size={24} />, title: "Publish & Share", desc: "Select custom background audio and one of our premium themes. Generate a public slug, copy the WhatsApp template, and send!" }
+            { step: "01", icon: <Smile className="text-purple-400" size={24} />, title: t("step1LTitle"), desc: t("step1LDesc") },
+            { step: "02", icon: <UploadCloud className="text-purple-400" size={24} />, title: t("step2LTitle"), desc: t("step2LDesc") },
+            { step: "03", icon: <Layout className="text-purple-400" size={24} />, title: t("step3LTitle"), desc: t("step3LDesc") }
           ].map((card, i) => (
             <motion.div
               key={i}
@@ -207,11 +229,11 @@ export default function LandingPage() {
       <section className="max-w-7xl mx-auto px-6 py-24 border-t border-zinc-950">
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
           <div>
-            <span className="text-[10px] tracking-widest font-mono text-purple-400 uppercase block mb-3">CURATED STYLING</span>
-            <h2 className="text-3xl md:text-4xl font-serif text-white tracking-wide">Four Cinematic Themes</h2>
+            <span className="text-[10px] tracking-widest font-mono text-purple-400 uppercase block mb-3">{t("curatedStyling")}</span>
+            <h2 className="text-3xl md:text-4xl font-serif text-white tracking-wide">{t("fourThemes")}</h2>
           </div>
           <Link href="/templates" className="text-xs text-purple-400 hover:text-purple-300 font-medium flex items-center gap-1.5">
-            Explore All Art Directions <ArrowRight size={14} />
+            {t("exploreThemes")} <ArrowRight size={14} />
           </Link>
         </div>
 
@@ -238,7 +260,7 @@ export default function LandingPage() {
                 href="/signup"
                 className="text-[10px] font-semibold text-purple-400 flex items-center gap-1.5 py-1 hover:text-purple-300 transition-colors cursor-pointer"
               >
-                Use Layout <ArrowRight size={12} />
+                {t("useLayout")} <ArrowRight size={12} />
               </Link>
             </div>
           ))}
@@ -338,17 +360,17 @@ export default function LandingPage() {
           <div className="absolute top-0 left-0 right-0 h-[1.5px] bg-gradient-to-r from-transparent via-purple-500/40 to-transparent"></div>
           
           <h2 className="text-3xl md:text-5xl font-serif text-white tracking-wide leading-tight mb-4">
-            Create Something Beautiful
+            {t("finalCtaTitle")}
           </h2>
           <p className="text-xs sm:text-sm text-zinc-400 font-light max-w-md mx-auto leading-relaxed mb-8">
-            Start designing a cinematic memory capsule for their milestone birthday today. Free, fast, and unforgettable.
+            {t("finalCtaDesc")}
           </p>
 
           <Link
             href={user ? "/dashboard" : "/signup"}
             className="inline-flex items-center gap-2 py-4.5 px-8 rounded-full font-semibold text-sm text-white bg-purple-600 hover:bg-purple-500 shadow-[0_0_20px_rgba(168,85,247,0.3)] transition-transform hover:scale-105 cursor-pointer"
           >
-            Get Started
+            {t("getStartedBtn")}
             <ArrowRight size={16} />
           </Link>
         </div>
