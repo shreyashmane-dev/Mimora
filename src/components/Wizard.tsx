@@ -12,6 +12,7 @@ import {
   Copy, ExternalLink
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import AICopilot from "./AICopilot";
 
 // Pre-defined music track URLs
 // Pre-defined music track URLs
@@ -290,6 +291,8 @@ export default function Wizard({ initialProject }: WizardProps) {
   });
   const [captions, setCaptions] = useState<string[]>(initialProject?.captions || []);
   const [isGeneratingAI, setIsGeneratingAI] = useState(false);
+  const [aiModel, setAiModel] = useState<"gemini" | "chatgpt">("gemini");
+  const [aiLength, setAiLength] = useState<"standard" | "large">("standard");
 
   // Publishing State
   const [slug, setSlug] = useState(initialProject?.slug || "");
@@ -426,7 +429,9 @@ export default function Wizard({ initialProject }: WizardProps) {
         nickname,
         age,
         relationship,
-        customMessage
+        customMessage,
+        aiModel,
+        aiLength
       );
       setAiWish(wishes);
 
@@ -445,6 +450,14 @@ export default function Wizard({ initialProject }: WizardProps) {
       alert("AI generation failed. Fallback wishes loaded.");
     } finally {
       setIsGeneratingAI(false);
+    }
+  };
+
+  const handleApplyText = (fieldName: "memories" | "intro" | "wishes" | "quote", value: string) => {
+    if (fieldName === "memories") {
+      setCustomMessage(value);
+    } else {
+      setAiWish(prev => ({ ...prev, [fieldName]: value }));
     }
   };
 
@@ -965,6 +978,65 @@ export default function Wizard({ initialProject }: WizardProps) {
                     </button>
                   </div>
 
+                  {/* Engine & Length Selectors */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 rounded-2xl bg-zinc-900/30 border border-zinc-850">
+                    <div>
+                      <label className="block text-xxs font-medium text-zinc-400 tracking-wider uppercase mb-1.5">AI Engine Mode</label>
+                      <div className="flex bg-zinc-950 p-0.5 rounded-xl border border-zinc-900">
+                        <button
+                          type="button"
+                          onClick={() => setAiModel("gemini")}
+                          className={`flex-1 py-1.5 text-xxs font-medium rounded-lg transition-all cursor-pointer ${
+                            aiModel === "gemini"
+                              ? "bg-purple-600 text-white font-semibold shadow-sm"
+                              : "text-zinc-500 hover:text-zinc-300"
+                          }`}
+                        >
+                          Gemini 2.5
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setAiModel("chatgpt")}
+                          className={`flex-1 py-1.5 text-xxs font-medium rounded-lg transition-all cursor-pointer ${
+                            aiModel === "chatgpt"
+                              ? "bg-purple-600 text-white font-semibold shadow-sm"
+                              : "text-zinc-500 hover:text-zinc-300"
+                          }`}
+                        >
+                          ChatGPT (GPT-4o)
+                        </button>
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-xxs font-medium text-zinc-400 tracking-wider uppercase mb-1.5">Wishes Length</label>
+                      <div className="flex bg-zinc-950 p-0.5 rounded-xl border border-zinc-900">
+                        <button
+                          type="button"
+                          onClick={() => setAiLength("standard")}
+                          className={`flex-1 py-1.5 text-xxs font-medium rounded-lg transition-all cursor-pointer ${
+                            aiLength === "standard"
+                              ? "bg-purple-600 text-white font-semibold shadow-sm"
+                              : "text-zinc-500 hover:text-zinc-300"
+                          }`}
+                        >
+                          Standard
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setAiLength("large")}
+                          className={`flex-1 py-1.5 text-xxs font-medium rounded-lg transition-all cursor-pointer ${
+                            aiLength === "large"
+                              ? "bg-purple-600 text-white font-semibold shadow-sm"
+                              : "text-zinc-500 hover:text-zinc-300"
+                          }`}
+                        >
+                          Large / Detailed
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
                   {isGeneratingAI ? (
                     <div className="space-y-4">
                       <div className="h-10 bg-zinc-900/50 rounded-xl animate-pulse" />
@@ -1175,6 +1247,14 @@ export default function Wizard({ initialProject }: WizardProps) {
           </div>
         </div>
       </div>
+      <AICopilot 
+        context={{
+          recipientName,
+          relationship,
+          customMessage
+        }}
+        onApplyText={handleApplyText}
+      />
     </div>
   );
 }
