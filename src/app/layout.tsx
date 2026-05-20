@@ -28,6 +28,9 @@ export const metadata: Metadata = {
   title: "Memora — Premium AI Birthday Memories Platform",
   description: "Turn memories into unforgettable, cinematic birthday experiences using AI and interactive storytelling.",
   metadataBase: new URL("http://localhost:3000"),
+  verification: {
+    google: "4NSWsjhj1Mb9PyWGNhBwYBjq7Y5kUiFoeEAtTcgSmOc",
+  },
   openGraph: {
     title: "Memora — Premium AI Birthday Memories Platform",
     description: "Turn memories into unforgettable, cinematic birthday experiences using AI and interactive storytelling.",
