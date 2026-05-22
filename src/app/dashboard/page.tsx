@@ -265,7 +265,7 @@ export default function DashboardPage() {
                         </h3>
                         {project.nickname && (
                           <span className="text-xs text-purple-400 font-light font-poppins">
-                            "{project.nickname}"
+                            &quot;{project.nickname}&quot;
                           </span>
                         )}
                       </div>
@@ -322,7 +322,7 @@ export default function DashboardPage() {
                           className="flex items-center gap-1 py-1.5 px-3 rounded-lg bg-purple-950/30 hover:bg-purple-900/40 text-purple-300 border border-purple-900/30 hover:border-purple-800/40 text-xs font-medium transition-all cursor-pointer"
                         >
                           <Share2 size={13} />
-                          "Share"
+                          &quot;Share&quot;
                         </button>
                       )}
                       
@@ -332,7 +332,7 @@ export default function DashboardPage() {
                         className="flex items-center gap-1 py-1.5 px-3 rounded-lg bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 hover:border-zinc-700 text-xs text-zinc-300 hover:text-white transition-all"
                       >
                         <ExternalLink size={13} />
-                        "Preview"
+                        &quot;Preview&quot;
                       </Link>
                     </div>
                   </div>
@@ -361,7 +361,7 @@ export default function DashboardPage() {
               </button>
 
               <h2 className="text-xl font-medium text-white mb-1">
-                "Share Experience"
+                &quot;Share Experience&quot;
               </h2>
               <p className="text-xs text-zinc-400 font-light mb-6">
                 {t("shareDesc")} {sharingProject.recipientName}.
@@ -375,7 +375,7 @@ export default function DashboardPage() {
               {/* Copy URL */}
               <div className="mb-4">
                 <label className="block text-xxs font-medium text-zinc-500 uppercase tracking-wider mb-1.5">
-                  "Public Link"
+                  &quot;Public Link&quot;
                 </label>
                 <div className="flex gap-2">
                   <input

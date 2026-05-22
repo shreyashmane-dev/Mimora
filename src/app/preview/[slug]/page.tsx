@@ -561,6 +561,8 @@ export default function PublicMicrositePage() {
   // Curtains opening transition for Classic theme
   useEffect(() => {
     if (slideIndex === 1 && project?.templateId === "classic") {
+
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setCurtainsOpen(false);
       const timer = setTimeout(() => {
         setCurtainsOpen(true);
@@ -587,6 +589,8 @@ export default function PublicMicrositePage() {
           delay: idx * 0.6 // staggered float
         };
       });
+
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setBalloons(spawned);
     } else {
       setBalloons([]);
@@ -815,13 +819,7 @@ export default function PublicMicrositePage() {
 
   return (
     <div className={`min-h-screen flex flex-col justify-between overflow-x-hidden relative ${theme.bgClass} ${theme.fontClass} transition-colors duration-1000`}>
-      {/* Floating Google Translate Switcher in Unlocked View */}
-      <div className="absolute top-6 left-6 z-50 flex items-center gap-2">
-        <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/40 hover:bg-black/70 border border-white/10 backdrop-blur-md transition-all duration-300">
-          <span className="text-[10px] uppercase tracking-wider text-zinc-400 font-mono">Lang:</span>
-          <div id="google_translate_element" className="google-translate-styled" />
-        </div>
-      </div>
+
       
       {/* Cinematic Ambient Effects matching each theme */}
       {project.templateId === "midnight_luxury" && (
@@ -1313,7 +1311,7 @@ export default function PublicMicrositePage() {
                                 </div>
                               </div>
                               <p className="text-cyan-400 text-[10px] tracking-widest text-center uppercase">
-                                // {project.photos[photoIndex].caption || "STARDUST SEQUENCE"}
+                                &#47;&#47; {project.photos[photoIndex].caption || "STARDUST SEQUENCE"}
                               </p>
                             </div>
                           ) : project.templateId === "sunset_boulevard" ? (

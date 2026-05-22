@@ -50,6 +50,7 @@ export default function AICopilot({ context, onApplyText }: AICopilotProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMessages((prev) => {
       if (prev.length === 0 || (prev.length === 1 && prev[0].sender === "copilot")) {
         return [

@@ -30,6 +30,246 @@ const MUSIC_TRACKS = [
 ];
 
 const TEMPLATES = [
+  {
+    id: "neon_vibes",
+    name: "Neon Vibes",
+    theme: "Dark Neon",
+    desc: "Vibrant neon lights, energetic flow, cyberpunk style.",
+    mockBg: "bg-black",
+    mockCard: "bg-zinc-900 border border-green-500/50 shadow-[0_0_20px_rgba(34,197,94,0.3)]",
+    mockText: "text-white",
+    mockAccent: "bg-gradient-to-r from-green-400 to-cyan-500 bg-clip-text text-transparent font-bold",
+    mockFont: "font-mono",
+    mockBtn: "bg-green-500 text-black font-bold shadow-[0_0_15px_rgba(34,197,94,0.5)] hover:bg-green-400"
+  },
+  {
+    id: "cherry_blossom",
+    name: "Cherry Blossom",
+    theme: "Soft Pink",
+    desc: "Gentle pink hues, delicate floral accents, serene vibe.",
+    mockBg: "bg-pink-50",
+    mockCard: "bg-white/80 border border-pink-200 shadow-xl",
+    mockText: "text-pink-900",
+    mockAccent: "text-pink-500 font-serif italic",
+    mockFont: "font-serif",
+    mockBtn: "bg-pink-400 text-white shadow-md hover:bg-pink-500"
+  },
+  {
+    id: "ocean_breeze",
+    name: "Ocean Breeze",
+    theme: "Aqua & Sand",
+    desc: "Calm blues, sandy tones, refreshing beach feel.",
+    mockBg: "bg-cyan-50",
+    mockCard: "bg-white border border-cyan-100 shadow-lg",
+    mockText: "text-cyan-900",
+    mockAccent: "text-cyan-600 font-medium tracking-wide",
+    mockFont: "font-sans",
+    mockBtn: "bg-cyan-500 text-white hover:bg-cyan-600"
+  },
+  {
+    id: "golden_retro",
+    name: "Golden Retro",
+    theme: "Vintage Gold",
+    desc: "Classic golden era, sepia tones, nostalgic warmth.",
+    mockBg: "bg-amber-50",
+    mockCard: "bg-[#fffdf7] border border-amber-200 shadow-[0_4px_20px_rgba(217,160,91,0.1)]",
+    mockText: "text-amber-950",
+    mockAccent: "text-amber-600 font-serif",
+    mockFont: "font-serif",
+    mockBtn: "bg-amber-600 text-white hover:bg-amber-700"
+  },
+  {
+    id: "cyber_glitch",
+    name: "Cyber Glitch",
+    theme: "Glitch Art",
+    desc: "Digital distortion, high contrast, futuristic edge.",
+    mockBg: "bg-zinc-950",
+    mockCard: "bg-black border-2 border-red-500/50 shadow-[4px_4px_0_rgba(239,68,68,0.5)]",
+    mockText: "text-red-100",
+    mockAccent: "text-red-500 font-black uppercase tracking-tighter",
+    mockFont: "font-mono",
+    mockBtn: "bg-red-600 text-white rounded-none hover:bg-red-500"
+  },
+  {
+    id: "forest_whisper",
+    name: "Forest Whisper",
+    theme: "Deep Green",
+    desc: "Lush greens, earthy browns, natural tranquility.",
+    mockBg: "bg-emerald-950",
+    mockCard: "bg-emerald-900/50 border border-emerald-800 backdrop-blur-md",
+    mockText: "text-emerald-50",
+    mockAccent: "text-emerald-300 font-serif",
+    mockFont: "font-sans",
+    mockBtn: "bg-emerald-600 text-white hover:bg-emerald-500"
+  },
+  {
+    id: "sunset_glow",
+    name: "Sunset Glow",
+    theme: "Orange & Pink",
+    desc: "Warm gradient skies, energetic fading light.",
+    mockBg: "bg-gradient-to-br from-orange-400 via-rose-400 to-purple-500",
+    mockCard: "bg-white/10 border border-white/20 backdrop-blur-lg shadow-2xl",
+    mockText: "text-white",
+    mockAccent: "text-orange-200 font-bold drop-shadow-md",
+    mockFont: "font-sans",
+    mockBtn: "bg-white text-orange-500 hover:bg-orange-50"
+  },
+  {
+    id: "starlight_serenade",
+    name: "Starlight Serenade",
+    theme: "Cosmic Night",
+    desc: "Deep space, starry specs, infinite wonder.",
+    mockBg: "bg-slate-950",
+    mockCard: "bg-slate-900 border border-slate-800 shadow-[0_0_30px_rgba(148,163,184,0.1)]",
+    mockText: "text-slate-300",
+    mockAccent: "text-blue-400 font-light tracking-widest",
+    mockFont: "font-sans",
+    mockBtn: "bg-blue-600 text-white hover:bg-blue-500"
+  },
+  {
+    id: "pastel_dream",
+    name: "Pastel Dream",
+    theme: "Soft Pastels",
+    desc: "Muted lavender, mint, and peach, dreamy soft focus.",
+    mockBg: "bg-fuchsia-50",
+    mockCard: "bg-white border-2 border-dashed border-fuchsia-200",
+    mockText: "text-fuchsia-800",
+    mockAccent: "text-fuchsia-500 font-medium",
+    mockFont: "font-sans",
+    mockBtn: "bg-fuchsia-300 text-fuchsia-900 hover:bg-fuchsia-400"
+  },
+  {
+    id: "monochrome_minimal",
+    name: "Monochrome Minimal",
+    theme: "Black & White",
+    desc: "Stark contrast, clean typography, absolute minimalism.",
+    mockBg: "bg-white",
+    mockCard: "bg-white border-4 border-black shadow-[8px_8px_0_black]",
+    mockText: "text-black",
+    mockAccent: "text-black font-black uppercase",
+    mockFont: "font-sans",
+    mockBtn: "bg-black text-white rounded-none hover:bg-zinc-800"
+  },
+  {
+    id: "synthwave_sunset",
+    name: "Synthwave Sunset",
+    theme: "80s Retro",
+    desc: "Neon grids, vibrant magenta and orange sun.",
+    mockBg: "bg-indigo-950",
+    mockCard: "bg-indigo-900/80 border border-fuchsia-500 shadow-[0_0_15px_rgba(217,70,239,0.4)]",
+    mockText: "text-fuchsia-100",
+    mockAccent: "text-yellow-400 font-bold italic",
+    mockFont: "font-sans",
+    mockBtn: "bg-gradient-to-r from-fuchsia-600 to-orange-500 text-white"
+  },
+  {
+    id: "royal_velvet",
+    name: "Royal Velvet",
+    theme: "Regal Red",
+    desc: "Deep crimson, gold filigree, luxurious texture.",
+    mockBg: "bg-rose-950",
+    mockCard: "bg-rose-900 border-2 border-yellow-600/50",
+    mockText: "text-rose-100",
+    mockAccent: "text-yellow-500 font-serif italic",
+    mockFont: "font-serif",
+    mockBtn: "bg-yellow-600 text-rose-950 hover:bg-yellow-500 font-bold"
+  },
+  {
+    id: "arctic_ice",
+    name: "Arctic Ice",
+    theme: "Frosty Blue",
+    desc: "Crisp whites, icy blues, crystalline clarity.",
+    mockBg: "bg-sky-50",
+    mockCard: "bg-white/60 backdrop-blur-xl border border-white shadow-xl",
+    mockText: "text-sky-900",
+    mockAccent: "text-sky-500 font-light",
+    mockFont: "font-sans",
+    mockBtn: "bg-sky-400 text-white hover:bg-sky-500"
+  },
+  {
+    id: "desert_mirage",
+    name: "Desert Mirage",
+    theme: "Terracotta",
+    desc: "Warm earth tones, baked clay, sun-drenched.",
+    mockBg: "bg-orange-50",
+    mockCard: "bg-orange-100/50 border border-orange-200",
+    mockText: "text-orange-900",
+    mockAccent: "text-orange-600 font-serif",
+    mockFont: "font-serif",
+    mockBtn: "bg-orange-600 text-white hover:bg-orange-700"
+  },
+  {
+    id: "lavender_haze",
+    name: "Lavender Haze",
+    theme: "Soft Purple",
+    desc: "Gentle violet, misty gradients, romantic.",
+    mockBg: "bg-violet-50",
+    mockCard: "bg-white border border-violet-100 shadow-md",
+    mockText: "text-violet-900",
+    mockAccent: "text-violet-500 font-medium",
+    mockFont: "font-sans",
+    mockBtn: "bg-violet-500 text-white hover:bg-violet-600"
+  },
+  {
+    id: "ruby_romance",
+    name: "Ruby Romance",
+    theme: "Deep Red",
+    desc: "Passionate crimson, dramatic lighting, intense love.",
+    mockBg: "bg-red-950",
+    mockCard: "bg-red-900/40 border border-red-500/30 backdrop-blur-sm",
+    mockText: "text-red-100",
+    mockAccent: "text-red-400 font-serif italic",
+    mockFont: "font-serif",
+    mockBtn: "bg-red-600 text-white hover:bg-red-500"
+  },
+  {
+    id: "emerald_city",
+    name: "Emerald City",
+    theme: "Bright Green",
+    desc: "Vivid emeralds, glowing highlights, magical.",
+    mockBg: "bg-green-950",
+    mockCard: "bg-green-900/60 border border-green-500/40",
+    mockText: "text-green-50",
+    mockAccent: "text-green-400 font-bold",
+    mockFont: "font-sans",
+    mockBtn: "bg-green-500 text-black font-semibold hover:bg-green-400"
+  },
+  {
+    id: "sapphire_depths",
+    name: "Sapphire Depths",
+    theme: "Deep Blue",
+    desc: "Profound oceanic blues, subtle ripples, calming.",
+    mockBg: "bg-blue-950",
+    mockCard: "bg-blue-900/50 border border-blue-500/20",
+    mockText: "text-blue-100",
+    mockAccent: "text-blue-300 font-light",
+    mockFont: "font-sans",
+    mockBtn: "bg-blue-600 text-white hover:bg-blue-500"
+  },
+  {
+    id: "amber_glow",
+    name: "Amber Glow",
+    theme: "Warm Honey",
+    desc: "Rich honey tones, cozy fireplace warmth.",
+    mockBg: "bg-yellow-950",
+    mockCard: "bg-yellow-900/40 border border-yellow-600/30",
+    mockText: "text-yellow-100",
+    mockAccent: "text-yellow-400 font-serif",
+    mockFont: "font-serif",
+    mockBtn: "bg-yellow-600 text-white hover:bg-yellow-500"
+  },
+  {
+    id: "crystal_clear",
+    name: "Crystal Clear",
+    theme: "Transparent Glass",
+    desc: "High-gloss glassmorphism, pristine, ultra-modern.",
+    mockBg: "bg-gradient-to-tr from-slate-100 to-slate-200",
+    mockCard: "bg-white/40 backdrop-blur-2xl border border-white/60 shadow-[0_8px_32px_rgba(0,0,0,0.1)]",
+    mockText: "text-slate-800",
+    mockAccent: "text-slate-500 font-light tracking-wide",
+    mockFont: "font-sans",
+    mockBtn: "bg-white/80 text-slate-800 hover:bg-white backdrop-blur-md"
+  },
   { 
     id: "midnight_luxury", 
     name: "Midnight Luxury", 
@@ -594,6 +834,8 @@ export default function Wizard({ initialProject }: WizardProps) {
     if (typeof Intl !== "undefined") {
       const localTz = Intl.DateTimeFormat().resolvedOptions().timeZone;
       if (!TIMEZONES.some(tz => tz.value === localTz)) {
+
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setTimezoneList(prev => [
           { value: localTz, label: `Local Browser Timezone (${localTz})` },
           ...prev
@@ -648,6 +890,7 @@ export default function Wizard({ initialProject }: WizardProps) {
   // Auto-generate AI content when user enters Step 5 and wishes are empty
   useEffect(() => {
     if (currentStep === 5 && !aiWish.wishes && recipientName && !isGeneratingAI) {
+      // eslint-disable-next-line react-hooks/immutability
       handleGenerateAI();
     }
   }, [currentStep, aiWish.wishes, recipientName]);
@@ -844,7 +1087,7 @@ export default function Wizard({ initialProject }: WizardProps) {
     try {
       const projectId = initialProject?.id || `proj-${Math.random().toString(36).substr(2, 9)}`;
       
-      const payload: any = {
+      const payload: Record<string, unknown> = {
         id: projectId,
         ownerId: user?.uid || "guest",
         recipientName,
@@ -867,7 +1110,7 @@ export default function Wizard({ initialProject }: WizardProps) {
         ...(initialProject?.createdAt ? { createdAt: initialProject.createdAt } : {})
       };
 
-      await saveProject(payload);
+      await saveProject(payload as unknown as MemoraProject);
       if (isPublishToggle) {
         setPublished(!published);
       }
@@ -1161,7 +1404,9 @@ export default function Wizard({ initialProject }: WizardProps) {
                       {TEMPLATES.map((tpl) => (
                         <div
                           key={tpl.id}
-                          onClick={() => setTemplateId(tpl.id as any)}
+                          onClick={() =>
+              /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+              setTemplateId(tpl.id as any)}
                           className={`glass-panel p-5 rounded-2xl cursor-pointer border transition-all duration-300 relative flex flex-col justify-between hover:border-purple-500/20 ${
                             templateId === tpl.id
                               ? "border-purple-500/60 bg-purple-950/10 shadow-[0_0_20px_rgba(168,85,247,0.15)]"
@@ -1413,7 +1658,9 @@ export default function Wizard({ initialProject }: WizardProps) {
                       >
                         <div 
                           className="flex-grow cursor-pointer py-1"
-                          onClick={() => setMusic(track.id as any)}
+                          onClick={() =>
+                  /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+                  setMusic(track.id as any)}
                         >
                           <div className="flex items-center gap-3">
                             <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${
@@ -1787,7 +2034,7 @@ export default function Wizard({ initialProject }: WizardProps) {
                     setIsSubmitting(true);
                     try {
                       const projectId = initialProject?.id || `proj-${Math.random().toString(36).substr(2, 9)}`;
-                      const payload: any = {
+                      const payload: Record<string, unknown> = {
                         id: projectId,
                         ownerId: user?.uid || "guest",
                         recipientName,
@@ -1809,7 +2056,7 @@ export default function Wizard({ initialProject }: WizardProps) {
                         language: currentLang,
                         ...(initialProject?.createdAt ? { createdAt: initialProject.createdAt } : {})
                       };
-                      await saveProject(payload);
+                      await saveProject(payload as unknown as MemoraProject);
                       router.push("/dashboard");
                     } catch (err) {
                       console.error("Publish error:", err);

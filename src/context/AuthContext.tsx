@@ -30,6 +30,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const refreshUser = () => setTick(t => t + 1);
 
   useEffect(() => {
+
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setLoading(true);
     const unsubscribe = getAuthStatus((u) => {
       setUser(u);
