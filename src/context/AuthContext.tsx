@@ -45,17 +45,20 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     };
   }, [tick]);
 
-  // Protect Dashboard & Creation Routes
+  // Protection removed - anyone can use it without logging in
+  // We simulate a default guest user if no user is found
   useEffect(() => {
-    if (!loading) {
-      const protectedPaths = ["/dashboard", "/create", "/project", "/profile"];
-      const isProtected = protectedPaths.some((path) => pathname.startsWith(path));
-      
-      if (isProtected && !user) {
-        router.push("/login");
-      }
+    if (!loading && !user) {
+      const guestUser = {
+        uid: "guest-user",
+        name: "Guest",
+        email: "guest@example.com",
+        avatar: "",
+        createdAt: new Date().toISOString()
+      };
+      setUser(guestUser);
     }
-  }, [user, loading, pathname, router]);
+  }, [user, loading]);
 
   const handleLogout = async () => {
     setLoading(true);
