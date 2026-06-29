@@ -4,7 +4,7 @@ import crypto from "crypto";
 import { getAllProjectsForCleanup, saveProject, MemoraProject } from "@/lib/firebase";
 
 // Extract Cloudinary public ID from secure URL
-function getCloudinaryPublicId(url: string): string | null {
+export function getCloudinaryPublicId(url: string): string | null {
   if (!url || !url.includes("res.cloudinary.com")) return null;
   try {
     const parts = url.split("/upload/");
