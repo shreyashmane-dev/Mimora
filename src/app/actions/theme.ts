@@ -42,9 +42,9 @@ export async function deleteImagesFromCloudinary(urls: string[]): Promise<boolea
   }
 
   try {
-    for (const url of urls) {
+    const deletePromises = urls.map(async (url) => {
       const publicId = getCloudinaryPublicId(url);
-      if (!publicId) continue;
+      if (!publicId) return;
 
       const timestamp = Math.round(new Date().getTime() / 1000);
       // Signature is SHA1 of public_id and timestamp concatenated with api_secret
@@ -57,18 +57,24 @@ export async function deleteImagesFromCloudinary(urls: string[]): Promise<boolea
       formData.append("timestamp", timestamp.toString());
       formData.append("signature", signature);
 
-      const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/destroy`, {
-        method: "POST",
-        body: formData,
-      });
+      try {
+        const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/destroy`, {
+          method: "POST",
+          body: formData,
+        });
 
-      if (!res.ok) {
-        console.error(`Failed to delete asset ${publicId} from Cloudinary: ${res.statusText}`);
-      } else {
-        const result = await res.json();
-        console.log(`Cloudinary destroy successful for: ${publicId}`, result);
+        if (!res.ok) {
+          console.error(`Failed to delete asset ${publicId} from Cloudinary: ${res.statusText}`);
+        } else {
+          const result = await res.json();
+          console.log(`Cloudinary destroy successful for: ${publicId}`, result);
+        }
+      } catch (err) {
+        console.error(`Error deleting asset ${publicId}:`, err);
       }
-    }
+    });
+
+    await Promise.all(deletePromises);
     return true;
   } catch (err) {
     console.error("Error during Cloudinary asset deletion:", err);
