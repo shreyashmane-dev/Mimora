@@ -79,18 +79,21 @@ export async function deleteImagesFromCloudinary(urls: string[]): Promise<boolea
 // Server Action to scan and cleanup expired projects (older than 45 days)
 export async function checkAndCleanupExpiredProjects(): Promise<{ cleanedCount: number; success: boolean }> {
   try {
-    const projects = await getAllProjectsForCleanup();
+    const now = new Date();
+    const expiryMs = 45 * 24 * 60 * 60 * 1000; // 45 days in milliseconds
+    const cutoffDate = new Date(now.getTime() - expiryMs).toISOString();
+
+    const projects = await getAllProjectsForCleanup(cutoffDate);
     if (!projects || projects.length === 0) {
       return { cleanedCount: 0, success: true };
     }
 
-    const now = new Date();
-    const expiryMs = 45 * 24 * 60 * 60 * 1000; // 45 days in milliseconds
     let cleanedCount = 0;
 
     for (const project of projects) {
       if (!project.createdAt) continue;
 
+      // Double check in case of mock projects or slight timing differences
       const projectDate = new Date(project.createdAt);
       const ageMs = now.getTime() - projectDate.getTime();
 
