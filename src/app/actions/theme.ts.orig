@@ -10,13 +10,13 @@ function getCloudinaryPublicId(url: string): string | null {
     const parts = url.split("/upload/");
     if (parts.length < 2) return null;
     const pathAfterUpload = parts[1]; // e.g. "v17162234/folder/name.jpg" or "v17162234/name.jpg"
-    
+
     // Remove the version segment (v followed by digits)
     const segments = pathAfterUpload.split("/");
     if (segments[0].startsWith("v") && /^\d+$/.test(segments[0].substring(1))) {
       segments.shift(); // Remove the version segment
     }
-    
+
     // Rejoin the rest and strip extension
     const fullPublicId = segments.join("/");
     const extensionIdx = fullPublicId.lastIndexOf(".");
@@ -42,9 +42,9 @@ export async function deleteImagesFromCloudinary(urls: string[]): Promise<boolea
   }
 
   try {
-    await Promise.all(urls.map(async (url) => {
+    for (const url of urls) {
       const publicId = getCloudinaryPublicId(url);
-      if (!publicId) return;
+      if (!publicId) continue;
 
       const timestamp = Math.round(new Date().getTime() / 1000);
       // Signature is SHA1 of public_id and timestamp concatenated with api_secret
@@ -57,22 +57,18 @@ export async function deleteImagesFromCloudinary(urls: string[]): Promise<boolea
       formData.append("timestamp", timestamp.toString());
       formData.append("signature", signature);
 
-      try {
-        const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/destroy`, {
-          method: "POST",
-          body: formData,
-        });
+      const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/destroy`, {
+        method: "POST",
+        body: formData,
+      });
 
-        if (!res.ok) {
-          console.error(`Failed to delete asset ${publicId} from Cloudinary: ${res.statusText}`);
-        } else {
-          const result = await res.json();
-          console.log(`Cloudinary destroy successful for: ${publicId}`, result);
-        }
-      } catch (err) {
-        console.error(`Network error destroying asset ${publicId}:`, err);
+      if (!res.ok) {
+        console.error(`Failed to delete asset ${publicId} from Cloudinary: ${res.statusText}`);
+      } else {
+        const result = await res.json();
+        console.log(`Cloudinary destroy successful for: ${publicId}`, result);
       }
-    }));
+    }
     return true;
   } catch (err) {
     console.error("Error during Cloudinary asset deletion:", err);
@@ -83,26 +79,27 @@ export async function deleteImagesFromCloudinary(urls: string[]): Promise<boolea
 // Server Action to scan and cleanup expired projects (older than 45 days)
 export async function checkAndCleanupExpiredProjects(): Promise<{ cleanedCount: number; success: boolean }> {
   try {
-    const now = new Date();
-    const cutoffDate = new Date(now.getTime() - 45 * 24 * 60 * 60 * 1000);
-    // Use ISO string to query against the stored ISO string dates
-    const cutoffDateStr = cutoffDate.toISOString();
-
-    const projects = await getAllProjectsForCleanup(cutoffDateStr);
+    const projects = await getAllProjectsForCleanup();
     if (!projects || projects.length === 0) {
       return { cleanedCount: 0, success: true };
     }
 
+    const now = new Date();
+    const expiryMs = 45 * 24 * 60 * 60 * 1000; // 45 days in milliseconds
     let cleanedCount = 0;
 
-    // Process projects concurrently
-    await Promise.all(projects.map(async (project) => {
-      // Check if project has photos to clean up
-      if (project.photos && project.photos.length > 0) {
+    for (const project of projects) {
+      if (!project.createdAt) continue;
+
+      const projectDate = new Date(project.createdAt);
+      const ageMs = now.getTime() - projectDate.getTime();
+
+      // Check if project is older than 45 days and has photos to clean up
+      if (ageMs > expiryMs && project.photos && project.photos.length > 0) {
         console.log(`Project ${project.id} is older than 45 days. Cleaning up ${project.photos.length} photos.`);
-        
+
         const photoUrls = project.photos.map(p => p.url);
-        // Delete from Cloudinary concurrently
+        // Delete from Cloudinary
         await deleteImagesFromCloudinary(photoUrls);
 
         // Update project in Firestore to clear photos
@@ -115,7 +112,7 @@ export async function checkAndCleanupExpiredProjects(): Promise<{ cleanedCount: 
         await saveProject(updatedProject);
         cleanedCount++;
       }
-    }));
+    }
 
     return { cleanedCount, success: true };
   } catch (err) {
@@ -159,15 +156,15 @@ export async function generateCustomThemeCss(
   const prompt = `
     You are an expert CSS designer for Memora, a premium cinematic birthday card web platform.
     The user wants to customize their birthday card design.
-    
+
     They have selected a Base Template ("${baseTemplateId}") which has this styling guide:
     "${templateStyle}"
-    
+
     The user has also described a custom style, requested adjustments, or pasted custom design/CSS/Tailwind code:
     "${userPrompt}"
 
     Your task is to extract the styles from their pasted custom code or description and harmoniously BLEND them with the selected Base Template to make it look professional, modern, and beautiful. Do not let it look messy! Combine the themes cleanly.
-    
+
     Here is the HTML structure & classes they can target:
     - Card container class: .glass-panel (this is the main card container that holds wishes, inputs, or the gallery).
     - Headings: h1, h2, h3, h4. (e.g., style the title headers or quote text).
@@ -175,7 +172,7 @@ export async function generateCustomThemeCss(
     - Typography: customize fonts (you can use @import url('https://fonts.googleapis.com/css2?family=...')).
     - Custom animations: You can define custom keyframe animations and apply them to elements (e.g. glowing keyframes, drifting shapes).
     - Custom borders, backdrop filters, drop-shadows, and background gradients.
-    
+
     Example override pattern:
     @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap');
     .glass-panel {
