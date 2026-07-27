@@ -2,6 +2,7 @@
 
 import crypto from "crypto";
 import { getAllProjectsForCleanup, saveProject, MemoraProject } from "@/lib/firebase";
+import { generateWithGemini, generateWithOpenAI } from "@/lib/ai-client";
 
 // Extract Cloudinary public ID from secure URL
 function getCloudinaryPublicId(url: string): string | null {
@@ -196,16 +197,7 @@ export async function generateCustomThemeCss(
 
   if (model === "gemini" && geminiKey) {
     try {
-      const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${geminiKey}`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            contents: [{ parts: [{ text: prompt }] }]
-          })
-        }
-      );
+      const response = await generateWithGemini(prompt, geminiKey);
       if (response.ok) {
         const data = await response.json();
         cssResult = data.candidates?.[0]?.content?.parts?.[0]?.text || "";
@@ -217,17 +209,7 @@ export async function generateCustomThemeCss(
 
   if (!cssResult && openAIKey) {
     try {
-      const response = await fetch("https://api.openai.com/v1/chat/completions", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${openAIKey}`
-        },
-        body: JSON.stringify({
-          model: "gpt-4o-mini",
-          messages: [{ role: "user", content: prompt }]
-        })
-      });
+      const response = await generateWithOpenAI(prompt, openAIKey);
       if (response.ok) {
         const data = await response.json();
         cssResult = data.choices?.[0]?.message?.content || "";
