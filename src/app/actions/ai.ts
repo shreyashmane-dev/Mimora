@@ -176,7 +176,7 @@ export async function generateAIBirthdayWish(
   }
 
   // Second choice: ChatGPT (OpenAI)
-  if ((model === "chatgpt" || !geminiKey) && openAIKey) {
+  if (openAIKey) {
     try {
       const response = await fetch("https://api.openai.com/v1/chat/completions", {
         method: "POST",
@@ -205,7 +205,7 @@ export async function generateAIBirthdayWish(
   }
 
   // Fallback call to Gemini if ChatGPT was chosen but failed and key exists
-  if (model === "chatgpt" && geminiKey && !openAIKey) {
+  if (model === "chatgpt" && geminiKey) {
     try {
       const response = await fetch(
         `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${geminiKey}`,
