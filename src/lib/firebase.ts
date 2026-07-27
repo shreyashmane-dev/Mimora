@@ -98,34 +98,40 @@ const MOCK_CURRENT_USER_KEY = "memora_mock_current_user";
 
 // Helper helper functions
 const getMockUsers = (): MemoraUser[] => {
+  if (process.env.NODE_ENV === "production") return [];
   if (typeof window === "undefined") return [];
   const data = localStorage.getItem(MOCK_USERS_KEY);
   return data ? JSON.parse(data) : [];
 };
 
 const saveMockUsers = (users: MemoraUser[]) => {
+  if (process.env.NODE_ENV === "production") return;
   if (typeof window === "undefined") return;
   localStorage.setItem(MOCK_USERS_KEY, JSON.stringify(users));
 };
 
 const getMockProjects = (): MemoraProject[] => {
+  if (process.env.NODE_ENV === "production") return [];
   if (typeof window === "undefined") return [];
   const data = localStorage.getItem(MOCK_PROJECTS_KEY);
   return data ? JSON.parse(data) : [];
 };
 
 const saveMockProjects = (projects: MemoraProject[]) => {
+  if (process.env.NODE_ENV === "production") return;
   if (typeof window === "undefined") return;
   localStorage.setItem(MOCK_PROJECTS_KEY, JSON.stringify(projects));
 };
 
 const getMockCurrentUser = (): MemoraUser | null => {
+  if (process.env.NODE_ENV === "production") return null;
   if (typeof window === "undefined") return null;
   const data = localStorage.getItem(MOCK_CURRENT_USER_KEY);
   return data ? JSON.parse(data) : null;
 };
 
 const saveMockCurrentUser = (user: MemoraUser | null) => {
+  if (process.env.NODE_ENV === "production") return;
   if (typeof window === "undefined") return;
   if (user) {
     localStorage.setItem(MOCK_CURRENT_USER_KEY, JSON.stringify(user));
