@@ -409,13 +409,21 @@ export const updateMemoraUser = async (userId: string, data: Partial<MemoraUser>
   }
 };
 
-export const getAllProjectsForCleanup = async (): Promise<MemoraProject[]> => {
+export const getAllProjectsForCleanup = async (cutoffDate?: string): Promise<MemoraProject[]> => {
   if (isFirebaseConfigured && db) {
-    const querySnapshot = await getDocs(collection(db, "projects"));
+    let projectsQuery: any = collection(db, "projects");
+    if (cutoffDate) {
+      projectsQuery = query(projectsQuery, where("createdAt", "<=", cutoffDate));
+    }
+    const querySnapshot = await getDocs(projectsQuery);
     return querySnapshot.docs.map(doc => doc.data() as MemoraProject);
   } else {
     if (typeof window !== "undefined") {
-      return getMockProjects();
+      let projects = getMockProjects();
+      if (cutoffDate) {
+         projects = projects.filter(p => p.createdAt <= cutoffDate);
+      }
+      return projects;
     }
     return [];
   }
