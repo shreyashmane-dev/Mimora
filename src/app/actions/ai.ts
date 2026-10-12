@@ -1,6 +1,7 @@
 "use server";
 
 import { Language } from "@/lib/translations";
+import { generateWithGemini, generateWithOpenAI } from "@/lib/ai-client";
 
 interface WishResponse {
   intro: string;
@@ -150,17 +151,7 @@ export async function generateAIBirthdayWish(
   // First choice: Gemini
   if (model === "gemini" && geminiKey) {
     try {
-      const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${geminiKey}`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            contents: [{ parts: [{ text: prompt }] }],
-            generationConfig: { responseMimeType: "application/json" }
-          })
-        }
-      );
+      const response = await generateWithGemini(prompt, geminiKey, "application/json");
 
       if (response.ok) {
         const data = await response.json();
@@ -178,18 +169,7 @@ export async function generateAIBirthdayWish(
   // Second choice: ChatGPT (OpenAI)
   if ((model === "chatgpt" || !geminiKey) && openAIKey) {
     try {
-      const response = await fetch("https://api.openai.com/v1/chat/completions", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${openAIKey}`
-        },
-        body: JSON.stringify({
-          model: "gpt-4o-mini",
-          messages: [{ role: "user", content: prompt }],
-          response_format: { type: "json_object" }
-        })
-      });
+      const response = await generateWithOpenAI(prompt, openAIKey, "json_object");
 
       if (response.ok) {
         const data = await response.json();
@@ -207,17 +187,7 @@ export async function generateAIBirthdayWish(
   // Fallback call to Gemini if ChatGPT was chosen but failed and key exists
   if (model === "chatgpt" && geminiKey && !openAIKey) {
     try {
-      const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${geminiKey}`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            contents: [{ parts: [{ text: prompt }] }],
-            generationConfig: { responseMimeType: "application/json" }
-          })
-        }
-      );
+      const response = await generateWithGemini(prompt, geminiKey, "application/json");
 
       if (response.ok) {
         const data = await response.json();
@@ -260,17 +230,7 @@ export async function generateAICaptions(
 
   if (geminiKey) {
     try {
-      const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${geminiKey}`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            contents: [{ parts: [{ text: prompt }] }],
-            generationConfig: { responseMimeType: "application/json" }
-          })
-        }
-      );
+      const response = await generateWithGemini(prompt, geminiKey, "application/json");
 
       if (response.ok) {
         const data = await response.json();
@@ -287,18 +247,7 @@ export async function generateAICaptions(
 
   if (openAIKey) {
     try {
-      const response = await fetch("https://api.openai.com/v1/chat/completions", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${openAIKey}`
-        },
-        body: JSON.stringify({
-          model: "gpt-4o-mini",
-          messages: [{ role: "user", content: prompt }],
-          response_format: { type: "json_object" }
-        })
-      });
+      const response = await generateWithOpenAI(prompt, openAIKey, "json_object");
 
       if (response.ok) {
         const data = await response.json();
@@ -349,16 +298,7 @@ export async function chatWithAICopilot(
 
   if (model === "gemini" && geminiKey) {
     try {
-      const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${geminiKey}`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            contents: [{ parts: [{ text: prompt }] }]
-          })
-        }
-      );
+      const response = await generateWithGemini(prompt, geminiKey);
       if (response.ok) {
         const data = await response.json();
         return data.candidates?.[0]?.content?.parts?.[0]?.text || "I am here to guide your storytelling. Try asking another question.";
@@ -370,17 +310,7 @@ export async function chatWithAICopilot(
 
   if ((model === "chatgpt" || !geminiKey) && openAIKey) {
     try {
-      const response = await fetch("https://api.openai.com/v1/chat/completions", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${openAIKey}`
-        },
-        body: JSON.stringify({
-          model: "gpt-4o-mini",
-          messages: [{ role: "user", content: prompt }]
-        })
-      });
+      const response = await generateWithOpenAI(prompt, openAIKey);
       if (response.ok) {
         const data = await response.json();
         return data.choices?.[0]?.message?.content || "I am here to guide your storytelling. Try asking another question.";
